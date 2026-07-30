@@ -1,0 +1,78 @@
+import { CircleHelp, History } from 'lucide-react'
+import { createBrowserRouter, Navigate } from 'react-router-dom'
+import { MainLayout } from '@/components/layout/MainLayout'
+import { LoginPage } from '@/pages/auth/LoginPage'
+import { ComingSoonPage } from '@/pages/home/ComingSoonPage'
+import { HomePage } from '@/pages/home/HomePage'
+import { MoodPage } from '@/pages/mood/MoodPage'
+import { NotFoundPage } from '@/pages/NotFoundPage'
+import { ProfilePage } from '@/pages/profile/ProfilePage'
+import { SymptomsPage } from '@/pages/symptoms/SymptomsPage'
+import { ProtectedRoute } from '@/routes/ProtectedRoute'
+import { PublicOnlyRoute } from '@/routes/PublicOnlyRoute'
+
+export const appRouter = createBrowserRouter([
+  {
+    path: '/',
+    element: <Navigate to="/inicio" replace />,
+  },
+  {
+    element: <PublicOnlyRoute />,
+    children: [
+      {
+        path: '/login',
+        element: <LoginPage />,
+      },
+    ],
+  },
+  {
+    element: <ProtectedRoute />,
+    children: [
+      {
+        element: <MainLayout />,
+        children: [
+          {
+            path: '/inicio',
+            element: <HomePage />,
+          },
+          {
+            path: '/estado-animo',
+            element: <MoodPage />,
+          },
+          {
+            path: '/sintomas',
+            element: <SymptomsPage />,
+          },
+          {
+            path: '/historial',
+            element: (
+              <ComingSoonPage
+                icon={History}
+                title="Mi historial"
+                description="Aqui podras consultar los registros que hayas realizado."
+              />
+            ),
+          },
+          {
+            path: '/preguntas-frecuentes',
+            element: (
+              <ComingSoonPage
+                icon={CircleHelp}
+                title="Preguntas frecuentes"
+                description="Encontraras informacion util para acompanarte durante tu tratamiento."
+              />
+            ),
+          },
+          {
+            path: '/perfil',
+            element: <ProfilePage />,
+          },
+          {
+            path: '*',
+            element: <NotFoundPage />,
+          },
+        ],
+      },
+    ],
+  },
+])
