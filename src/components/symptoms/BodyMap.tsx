@@ -91,10 +91,10 @@ export function BodyMap({
                 type="button"
                 className={
                   isSelected
-                    ? 'body-map__marker body-map__marker-selected'
+                    ? `body-map__marker body-map__marker-${marker.regionId} body-map__marker-selected`
                     : isMuted
-                      ? 'body-map__marker body-map__marker-muted'
-                      : 'body-map__marker'
+                      ? `body-map__marker body-map__marker-${marker.regionId} body-map__marker-muted`
+                      : `body-map__marker body-map__marker-${marker.regionId}`
                 }
                 style={
                   {

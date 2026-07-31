@@ -148,7 +148,8 @@ export function SymptomsPage() {
 
           <div className="symptom-selection-header">
             <div className="section-heading symptom-selection-heading">
-              <h2>Pulse en el area de incomodidad</h2>
+              <h2>Como te sientes hoy?</h2>
+              <p>Selecciona el area donde tienes molestias o sintomas.</p>
             </div>
           </div>
 

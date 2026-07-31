@@ -1,6 +1,7 @@
 import type { LucideIcon } from 'lucide-react'
 import {
   Activity,
+  CalendarDays,
   CircleHelp,
   History,
   House,
@@ -37,6 +38,13 @@ export const navigationItems: NavigationItem[] = [
     shortLabel: 'Sintomas',
     title: 'Reportar sintomas',
     icon: Activity,
+  },
+  {
+    to: '/invitaciones',
+    label: 'Invitaciones',
+    shortLabel: 'Invitaciones',
+    title: 'Invitaciones',
+    icon: CalendarDays,
   },
   {
     to: '/historial',

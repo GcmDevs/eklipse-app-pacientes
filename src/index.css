@@ -1335,6 +1335,8 @@ svg {
 .symptom-selection-header {
   display: grid;
   gap: 4px;
+  justify-items: center;
+  text-align: center;
 }
 
 .symptom-selection-heading {
@@ -1343,12 +1345,14 @@ svg {
 
 .symptom-selection-heading h2 {
   margin: 0;
-  font-size: clamp(1.45rem, 2vw, 1.9rem);
+  font-size: clamp(1.6rem, 2.8vw, 2.35rem);
+  color: var(--color-primary-strong);
 }
 
 .symptom-selection-heading p,
 .symptom-subheading p {
-  max-width: 42rem;
+  max-width: 26rem;
+  margin: 10px auto 0;
 }
 
 .symptom-select-panel,
@@ -1385,17 +1389,20 @@ svg {
 }
 
 .body-map-card {
-  padding: 0;
-  border: none;
-  box-shadow: none;
-  background: transparent;
+  padding: 14px 14px 8px;
+  border-radius: 28px;
+  border: 1px solid rgba(207, 225, 231, 0.95);
+  background:
+    radial-gradient(circle at top right, rgba(111, 218, 211, 0.18), transparent 34%),
+    linear-gradient(180deg, rgba(243, 251, 251, 0.98), rgba(252, 255, 255, 0.98));
+  box-shadow: 0 18px 36px rgba(31, 82, 104, 0.08);
 }
 
 .body-map__canvas {
   position: relative;
-  width: min(100%, 620px);
+  width: min(100%, 640px);
   margin: 0 auto;
-  min-height: 470px;
+  min-height: 640px;
   padding: 0;
   border: none;
   background: transparent;
@@ -1404,7 +1411,7 @@ svg {
 
 .body-map__figure {
   position: relative;
-  width: min(64%, 300px);
+  width: min(72%, 360px);
   aspect-ratio: 0.4;
   margin: 0 auto;
   overflow: visible;
@@ -1433,6 +1440,8 @@ svg {
 }
 
 .body-map__marker {
+  --marker-color: #1fc3cf;
+  --marker-soft: rgba(31, 195, 207, 0.16);
   position: absolute;
   transform: translate(-50%, -50%);
   background: transparent;
@@ -1456,21 +1465,21 @@ svg {
 }
 
 .body-map__marker-selected .body-map__pin {
-  background: var(--color-primary);
+  background: var(--marker-color);
   box-shadow:
-    0 0 0 6px rgba(31, 82, 104, 0.12),
-    0 0 0 14px rgba(74, 166, 162, 0.12),
-    0 0 0 24px rgba(74, 166, 162, 0.08);
+    0 0 0 6px color-mix(in srgb, var(--marker-color) 18%, white),
+    0 0 0 14px color-mix(in srgb, var(--marker-color) 12%, white),
+    0 0 0 24px color-mix(in srgb, var(--marker-color) 8%, white);
 }
 
 .body-map__pin {
   position: relative;
-  width: 22px;
-  height: 22px;
+  width: 18px;
+  height: 18px;
   border-radius: 999px;
-  background: #1fc3cf;
+  background: var(--marker-color);
   border: 3px solid #ffffff;
-  box-shadow: 0 6px 18px rgba(31, 82, 104, 0.18);
+  box-shadow: 0 8px 18px rgba(31, 82, 104, 0.16);
   animation: markerPulse 1.9s ease-in-out infinite;
   flex-shrink: 0;
 }
@@ -1478,17 +1487,18 @@ svg {
 .body-map__pin::after {
   content: '';
   position: absolute;
-  inset: -8px;
+  inset: -7px;
   border-radius: 999px;
-  border: 1px solid rgba(31, 195, 207, 0.34);
+  border: 1px solid color-mix(in srgb, var(--marker-color) 40%, white);
 }
 
 .body-map__line {
   position: absolute;
   top: 50%;
   width: var(--line-width);
-  border-top: 1.5px dashed rgba(38, 182, 202, 0.8);
+  border-top: 1.5px dashed var(--marker-color);
   transform: translateY(-50%);
+  opacity: 0.75;
 }
 
 .body-map__line-left {
@@ -1501,13 +1511,13 @@ svg {
 
 .body-map__label {
   position: absolute;
-  max-width: 132px;
-  min-height: 46px;
-  padding: 8px 10px;
+  max-width: 148px;
+  min-height: 50px;
+  padding: 8px 12px;
   border-radius: 999px;
   border: 1px solid rgba(215, 228, 232, 0.94);
-  background: rgba(255, 255, 255, 0.92);
-  box-shadow: 0 8px 20px rgba(31, 82, 104, 0.08);
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: 0 10px 24px rgba(31, 82, 104, 0.08);
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -1534,14 +1544,14 @@ svg {
 }
 
 .body-map__icon {
-  width: 28px;
-  height: 28px;
+  width: 30px;
+  height: 30px;
   border-radius: 999px;
   display: grid;
   place-items: center;
   flex-shrink: 0;
-  color: #21a8ba;
-  background: rgba(241, 250, 251, 0.96);
+  color: var(--marker-color);
+  background: color-mix(in srgb, var(--marker-soft) 90%, white);
 }
 
 .body-map__icon-svg {
@@ -1560,8 +1570,33 @@ svg {
 .body-map__marker:focus-visible .body-map__label,
 .body-map__marker:focus-visible .body-map__pin {
   box-shadow:
-    0 0 0 3px rgba(74, 166, 162, 0.18),
-    0 0 0 6px rgba(74, 166, 162, 0.16);
+    0 0 0 3px color-mix(in srgb, var(--marker-color) 20%, white),
+    0 0 0 6px color-mix(in srgb, var(--marker-color) 14%, white);
+}
+
+.body-map__marker-oral {
+  --marker-color: #1ab8c6;
+  --marker-soft: rgba(26, 184, 198, 0.18);
+}
+
+.body-map__marker-respiratory {
+  --marker-color: #58a7ff;
+  --marker-soft: rgba(88, 167, 255, 0.18);
+}
+
+.body-map__marker-digestive {
+  --marker-color: #68c96d;
+  --marker-soft: rgba(104, 201, 109, 0.18);
+}
+
+.body-map__marker-urinary {
+  --marker-color: #f0b23c;
+  --marker-soft: rgba(240, 178, 60, 0.18);
+}
+
+.body-map__marker-skin {
+  --marker-color: #f56d8c;
+  --marker-soft: rgba(245, 109, 140, 0.18);
 }
 
 @keyframes markerPulse {
@@ -2028,6 +2063,549 @@ svg {
   margin: 0 0 24px;
 }
 
+.home-dashboard {
+  display: grid;
+  gap: 24px;
+}
+
+.home-hero-panel,
+.home-featured-invitation {
+  border-radius: 24px;
+  border: 1px solid rgba(211, 226, 232, 0.95);
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: 0 16px 34px rgba(31, 82, 104, 0.08);
+}
+
+.home-hero-panel {
+  padding: 18px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(180px, 0.8fr);
+  gap: 14px;
+  background:
+    radial-gradient(circle at top right, rgba(114, 221, 214, 0.22), transparent 34%),
+    linear-gradient(180deg, rgba(242, 251, 250, 0.96), rgba(255, 255, 255, 0.98));
+}
+
+.home-hero-copy {
+  display: grid;
+  gap: 12px;
+  align-content: start;
+}
+
+.home-hero-copy h2 {
+  margin: 0;
+  font-size: clamp(2rem, 3vw, 2.8rem);
+  line-height: 1.05;
+  color: var(--color-primary-strong);
+}
+
+.home-hero-copy p {
+  margin: 0;
+  max-width: 22rem;
+  color: var(--color-primary);
+}
+
+.home-hero-benefits {
+  display: grid;
+  gap: 10px;
+}
+
+.home-benefit-card {
+  min-height: 64px;
+  padding: 12px 14px;
+  border-radius: 18px;
+  border: 1px solid rgba(215, 228, 232, 0.95);
+  background: rgba(255, 255, 255, 0.94);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.home-benefit-icon,
+.home-summary-icon,
+.home-featured-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+
+.home-benefit-icon,
+.home-featured-icon {
+  background: rgba(214, 241, 239, 0.98);
+  color: #189cad;
+}
+
+.home-benefit-card strong {
+  color: var(--color-primary);
+  line-height: 1.25;
+}
+
+.home-hero-visual {
+  min-height: 280px;
+  border-radius: 22px;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at top left, rgba(110, 216, 208, 0.18), transparent 34%),
+    linear-gradient(180deg, rgba(227, 247, 244, 0.94), rgba(247, 251, 252, 0.98));
+  display: grid;
+  place-items: end center;
+  padding: 10px 10px 0;
+}
+
+.home-hero-image {
+  width: min(100%, 220px);
+  aspect-ratio: 3 / 4;
+  height: auto;
+  object-fit: contain;
+  object-position: center bottom;
+}
+
+.home-summary-strip {
+  gap: 14px;
+}
+
+.home-summary-item {
+  padding: 18px;
+  gap: 8px;
+  border-radius: 22px;
+  border: 1px solid rgba(211, 226, 232, 0.92);
+  box-shadow: 0 12px 28px rgba(31, 82, 104, 0.05);
+}
+
+.home-summary-item strong {
+  font-size: 2.1rem;
+  color: var(--color-primary-strong);
+}
+
+.home-summary-item-teal {
+  background: linear-gradient(180deg, rgba(228, 249, 246, 0.96), rgba(246, 252, 251, 0.98));
+}
+
+.home-summary-item-amber {
+  background: linear-gradient(180deg, rgba(255, 244, 220, 0.96), rgba(255, 251, 243, 0.98));
+}
+
+.home-summary-item-blue {
+  background: linear-gradient(180deg, rgba(232, 240, 255, 0.96), rgba(246, 249, 255, 0.98));
+}
+
+.home-summary-item-teal .home-summary-icon {
+  background: rgba(210, 244, 241, 0.98);
+  color: #15a0af;
+}
+
+.home-summary-item-amber .home-summary-icon {
+  background: rgba(255, 235, 197, 0.98);
+  color: #e9a21e;
+}
+
+.home-summary-item-blue .home-summary-icon {
+  background: rgba(224, 234, 255, 0.98);
+  color: #4f86f7;
+}
+
+.home-featured-invitation {
+  padding: 16px 18px;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 14px;
+}
+
+.home-featured-copy {
+  display: grid;
+  gap: 6px;
+}
+
+.home-featured-copy strong {
+  font-size: 1.18rem;
+  color: var(--color-primary-strong);
+}
+
+.home-featured-copy p,
+.home-featured-copy span {
+  margin: 0;
+  color: var(--color-text-muted);
+}
+
+.invitation-page {
+  width: min(640px, 100%);
+}
+
+.invitation-shell {
+  padding: 14px;
+  border-radius: 18px;
+  border: 1px solid rgba(211, 226, 232, 0.95);
+  background:
+    radial-gradient(circle at top right, rgba(118, 220, 212, 0.14), transparent 34%),
+    linear-gradient(180deg, rgba(248, 252, 252, 0.98), rgba(255, 255, 255, 0.98));
+  box-shadow: 0 12px 26px rgba(31, 82, 104, 0.08);
+  display: grid;
+  gap: 12px;
+}
+
+.invitation-topbar {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+}
+
+.invitation-topbar h1 {
+  margin: 0;
+  font-size: 1.18rem;
+  color: var(--color-primary-strong);
+}
+
+.invitation-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--color-primary);
+  font-weight: 700;
+}
+
+.invitation-filter-button {
+  justify-self: end;
+}
+
+.invitation-tabs {
+  display: grid;
+  grid-template-columns: repeat(3, max-content);
+  gap: 16px;
+  padding: 0 4px;
+}
+
+.invitation-tab {
+  min-height: 30px;
+  padding: 0 2px;
+  background: transparent;
+  color: #8095a0;
+  font-size: 0.82rem;
+  font-weight: 600;
+  position: relative;
+}
+
+.invitation-tab-active {
+  color: #1baab7;
+}
+
+.invitation-tab-active::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -4px;
+  height: 2px;
+  border-radius: 999px;
+  background: #1fc3cf;
+}
+
+.invitation-list {
+  display: grid;
+  gap: 10px;
+}
+
+.invitation-list-card {
+  padding: 10px 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(219, 230, 234, 0.95);
+  background: rgba(255, 255, 255, 0.98);
+  box-shadow: 0 8px 16px rgba(31, 82, 104, 0.04);
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+}
+
+.invitation-list-card-teal {
+  box-shadow:
+    inset 3px 0 0 #27c0c9,
+    0 10px 20px rgba(31, 82, 104, 0.05);
+}
+
+.invitation-list-card-purple {
+  box-shadow:
+    inset 3px 0 0 #ae7cea,
+    0 10px 20px rgba(31, 82, 104, 0.05);
+}
+
+.invitation-list-card-amber {
+  box-shadow:
+    inset 3px 0 0 #f3b23e,
+    0 10px 20px rgba(31, 82, 104, 0.05);
+}
+
+.invitation-list-card-rose {
+  box-shadow:
+    inset 3px 0 0 #ef718f,
+    0 10px 20px rgba(31, 82, 104, 0.05);
+}
+
+.invitation-list-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+
+.invitation-list-icon-teal {
+  background: rgba(220, 245, 244, 0.98);
+  color: #20a9b7;
+}
+
+.invitation-list-icon-purple {
+  background: rgba(239, 230, 252, 0.98);
+  color: #a36ce7;
+}
+
+.invitation-list-icon-amber {
+  background: rgba(255, 243, 220, 0.98);
+  color: #f0ab2c;
+}
+
+.invitation-list-icon-rose {
+  background: rgba(255, 231, 238, 0.98);
+  color: #ea6484;
+}
+
+.invitation-list-copy {
+  display: grid;
+  gap: 4px;
+}
+
+.invitation-list-copy strong {
+  color: var(--color-primary-strong);
+  font-size: 0.94rem;
+  line-height: 1.2;
+}
+
+.invitation-list-copy span {
+  color: var(--color-text-muted);
+  font-size: 0.74rem;
+}
+
+.invitation-list-end {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #93a6b0;
+}
+
+.invitation-status-pill {
+  min-height: 24px;
+  padding: 0 9px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.invitation-status-pill-teal {
+  background: rgba(224, 248, 239, 0.98);
+  color: #48b680;
+}
+
+.invitation-status-pill-purple {
+  background: rgba(242, 233, 255, 0.98);
+  color: #995de4;
+}
+
+.invitation-status-pill-amber {
+  background: rgba(255, 243, 221, 0.98);
+  color: #e8a526;
+}
+
+.invitation-status-pill-rose {
+  background: rgba(255, 232, 239, 0.98);
+  color: #ec6987;
+}
+
+.invitation-status-pill-past {
+  background: rgba(236, 242, 245, 0.98);
+  color: #6f8793;
+}
+
+.invitation-detail-page {
+  width: min(520px, 100%);
+}
+
+.invitation-detail-shell {
+  gap: 0;
+  overflow: hidden;
+  padding: 0;
+}
+
+.invitation-detail-shell .invitation-topbar {
+  padding: 14px 14px 10px;
+}
+
+.invitation-detail-hero {
+  min-height: 188px;
+  padding: 18px 18px 76px;
+  display: grid;
+  grid-template-columns: 120px minmax(0, 1fr);
+  gap: 16px;
+  color: #ffffff;
+  position: relative;
+}
+
+.invitation-detail-hero-teal {
+  background: linear-gradient(135deg, #31c2c7, #1295a8);
+}
+
+.invitation-detail-hero-purple {
+  background: linear-gradient(135deg, #ac7ae8, #7f65db);
+}
+
+.invitation-detail-hero-amber {
+  background: linear-gradient(135deg, #f0bb4d, #de982f);
+}
+
+.invitation-detail-hero-rose {
+  background: linear-gradient(135deg, #ef7c99, #df5f87);
+}
+
+.invitation-detail-hero::before,
+.invitation-detail-hero::after {
+  content: '';
+  position: absolute;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.invitation-detail-hero::before {
+  width: 110px;
+  height: 110px;
+  top: 16px;
+  left: 24px;
+}
+
+.invitation-detail-hero::after {
+  width: 18px;
+  height: 18px;
+  top: 20px;
+  right: 24px;
+  box-shadow:
+    0 74px 0 rgba(255, 255, 255, 0.08),
+    -26px 46px 0 rgba(255, 255, 255, 0.06);
+}
+
+.invitation-detail-hero-art {
+  display: grid;
+  place-items: center;
+}
+
+.invitation-detail-heart-wrap {
+  width: 86px;
+  height: 86px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  background: rgba(255, 255, 255, 0.18);
+  color: #ffffff;
+  position: relative;
+  z-index: 1;
+}
+
+.invitation-detail-heart-wrap::after {
+  content: '';
+  position: absolute;
+  inset: 14px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.18);
+  z-index: -1;
+}
+
+.invitation-detail-hero-copy {
+  position: relative;
+  z-index: 1;
+}
+
+.invitation-detail-hero-copy h1 {
+  margin: 0 0 8px;
+  font-size: 1.65rem;
+  line-height: 1.12;
+}
+
+.invitation-detail-hero-copy p {
+  margin: 0;
+  max-width: 17rem;
+  color: rgba(255, 255, 255, 0.92);
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.invitation-detail-card {
+  margin: -42px 14px 14px;
+  padding: 14px;
+  border-radius: 24px;
+  border: 1px solid rgba(219, 230, 234, 0.95);
+  background: rgba(255, 255, 255, 0.98);
+  box-shadow: 0 14px 30px rgba(31, 82, 104, 0.12);
+  position: relative;
+  z-index: 2;
+}
+
+.invitation-detail-list {
+  display: grid;
+  gap: 0;
+  margin: 0;
+}
+
+.invitation-detail-list div {
+  padding: 14px 0;
+  display: grid;
+  grid-template-columns: 112px minmax(0, 1fr);
+  gap: 14px;
+  border-top: 1px solid rgba(226, 235, 239, 0.94);
+}
+
+.invitation-detail-list div:first-child {
+  border-top: none;
+}
+
+.invitation-detail-list dt {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  color: var(--color-primary-strong);
+  font-size: 0.92rem;
+}
+
+.invitation-detail-list dd {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: 0.92rem;
+}
+
+.invitation-detail-actions {
+  display: grid;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.invitation-detail-primary {
+  min-height: 46px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #169aaa, #2bc0c8);
+  box-shadow: none;
+}
+
+.invitation-detail-secondary {
+  min-height: 46px;
+  border-radius: 14px;
+  border-color: rgba(48, 179, 192, 0.34);
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -2449,5 +3027,170 @@ svg {
 @media (max-width: 1024px) {
   .mobile-only {
     display: inline-grid;
+  }
+}
+
+@media (max-width: 720px) {
+  .home-hero-panel {
+    grid-template-columns: minmax(0, 1fr) minmax(120px, 0.72fr);
+    padding: 14px;
+    gap: 10px;
+  }
+
+  .home-hero-copy h2 {
+    font-size: 1.55rem;
+  }
+
+  .home-hero-copy p,
+  .home-featured-copy p,
+  .home-featured-copy span {
+    font-size: 0.84rem;
+  }
+
+  .home-hero-visual {
+    min-height: 190px;
+    padding: 8px 8px 0;
+  }
+
+  .home-hero-image {
+    width: min(100%, 144px);
+  }
+
+  .home-benefit-card {
+    min-height: 54px;
+    padding: 10px 12px;
+    gap: 8px;
+  }
+
+  .home-benefit-icon,
+  .home-summary-icon,
+  .home-featured-icon {
+    width: 34px;
+    height: 34px;
+    border-radius: 12px;
+  }
+
+  .home-benefit-card strong {
+    font-size: 0.84rem;
+  }
+
+  .home-summary-strip {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .home-summary-item {
+    padding: 12px;
+    border-radius: 18px;
+  }
+
+  .home-summary-item strong {
+    font-size: 1.35rem;
+  }
+
+  .home-summary-item span {
+    font-size: 0.75rem;
+  }
+
+  .home-featured-invitation {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    padding: 14px;
+    gap: 10px;
+  }
+
+  .home-featured-copy strong {
+    font-size: 1rem;
+  }
+
+  .invitation-shell {
+    padding: 14px;
+    border-radius: 20px;
+    gap: 14px;
+  }
+
+  .invitation-topbar h1 {
+    font-size: 1.2rem;
+  }
+
+  .invitation-tabs {
+    gap: 14px;
+    padding: 0 2px;
+  }
+
+  .invitation-tab {
+    font-size: 0.85rem;
+  }
+
+  .invitation-list-card {
+    padding: 10px 12px;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 10px;
+  }
+
+  .invitation-list-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+  }
+
+  .invitation-list-end {
+    grid-column: 1 / -1;
+    justify-content: space-between;
+    padding-left: 50px;
+  }
+
+  .invitation-list-copy strong {
+    font-size: 0.94rem;
+  }
+
+  .invitation-list-copy span,
+  .invitation-status-pill {
+    font-size: 0.76rem;
+  }
+
+  .invitation-detail-page {
+    width: 100%;
+  }
+
+  .invitation-detail-hero {
+    min-height: 166px;
+    padding: 16px 14px 68px;
+    grid-template-columns: 88px minmax(0, 1fr);
+    gap: 12px;
+  }
+
+  .invitation-detail-heart-wrap {
+    width: 66px;
+    height: 66px;
+  }
+
+  .invitation-detail-hero-copy h1 {
+    font-size: 1.38rem;
+  }
+
+  .invitation-detail-hero-copy p {
+    font-size: 0.84rem;
+  }
+
+  .invitation-detail-card {
+    margin: -34px 10px 10px;
+    padding: 12px;
+    border-radius: 20px;
+  }
+
+  .invitation-detail-list div {
+    grid-template-columns: 92px minmax(0, 1fr);
+    gap: 10px;
+    padding: 12px 0;
+  }
+
+  .invitation-detail-list dt,
+  .invitation-detail-list dd {
+    font-size: 0.82rem;
+  }
+
+  .invitation-detail-primary,
+  .invitation-detail-secondary {
+    min-height: 42px;
   }
 }

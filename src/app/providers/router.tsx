@@ -4,6 +4,8 @@ import { MainLayout } from '@/components/layout/MainLayout'
 import { LoginPage } from '@/pages/auth/LoginPage'
 import { ComingSoonPage } from '@/pages/home/ComingSoonPage'
 import { HomePage } from '@/pages/home/HomePage'
+import { InvitationDetailPage } from '@/pages/invitations/InvitationDetailPage'
+import { InvitationsPage } from '@/pages/invitations/InvitationsPage'
 import { MoodPage } from '@/pages/mood/MoodPage'
 import { NotFoundPage } from '@/pages/NotFoundPage'
 import { ProfilePage } from '@/pages/profile/ProfilePage'
@@ -42,6 +44,14 @@ export const appRouter = createBrowserRouter([
           {
             path: '/sintomas',
             element: <SymptomsPage />,
+          },
+          {
+            path: '/invitaciones',
+            element: <InvitationsPage />,
+          },
+          {
+            path: '/invitaciones/:invitationId',
+            element: <InvitationDetailPage />,
           },
           {
             path: '/historial',
