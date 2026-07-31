@@ -1,5 +1,8 @@
 import { useMemo, useState } from 'react'
-import { Activity, ArrowLeft, Search } from 'lucide-react'
+import {
+  ArrowLeft,
+  Search,
+} from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { BodyMap } from '@/components/symptoms/BodyMap'
 import { QuestionRenderer } from '@/components/symptoms/QuestionRenderer'
@@ -32,9 +35,10 @@ export function SymptomsPage() {
   const navigate = useNavigate()
   const patient = getCurrentPatient()
   const session = getAuthSession()
-  const [selectedRegionId, setSelectedRegionId] = useState<BodyRegionId | null>(null)
   const [sheetRegionId, setSheetRegionId] = useState<BodyRegionId | null>(null)
   const [sheetQuickAccessId, setSheetQuickAccessId] = useState<QuickAccessId | null>(null)
+  const [activeRegionId, setActiveRegionId] = useState<BodyRegionId | null>(null)
+  const [activeQuickAccessId, setActiveQuickAccessId] = useState<QuickAccessId | null>(null)
   const [selectedSymptom, setSelectedSymptom] = useState<SymptomDefinition | null>(null)
   const [selectedSeverityId, setSelectedSeverityId] = useState<string | null>(null)
   const [answers, setAnswers] = useState<SymptomAnswerMap>({})
@@ -112,31 +116,23 @@ export function SymptomsPage() {
     selectedSeverity !== undefined &&
     (activeQuestions.length === 0 || allQuestionsAnswered)
 
+  const usesFocusCanvas = flowStep !== 'search'
+  const overlayStep =
+    flowStep === 'severity' ||
+    flowStep === 'questions' ||
+    flowStep === 'summary' ||
+    flowStep === 'success'
+  const visibleRegionSelection = sheetRegionId ?? null
+
   return (
     <main
       className={
-        flowStep === 'select-region'
+        usesFocusCanvas
           ? 'page-shell symptom-page symptom-page-select'
           : 'page-shell symptom-page'
       }
     >
-      {flowStep !== 'select-region' ? (
-        <section className="module-hero symptom-hero">
-          <div className="module-hero-icon symptom-hero-icon">
-            <Activity size={24} aria-hidden="true" />
-          </div>
-          <div className="module-hero-copy">
-            <p className="eyebrow">Registro de sintomas</p>
-            <h2>Que estas sintiendo hoy?</h2>
-            <p>
-              Te guiaremos paso a paso para registrar tu molestia con palabras
-              sencillas y opciones faciles de tocar.
-            </p>
-          </div>
-        </section>
-      ) : null}
-
-      {flowStep === 'select-region' ? (
+      {usesFocusCanvas ? (
         <section className="symptom-step-card symptom-step-grid symptom-step-card-compact">
           <div className="symptom-focus-topbar">
             <button
@@ -159,9 +155,10 @@ export function SymptomsPage() {
           <section className="symptom-select-panel">
             <BodyMap
               avatarVariant={session?.user.avatarVariant ?? 'female'}
-              selectedRegionId={selectedRegionId}
+              selectedRegionId={visibleRegionSelection}
               onSelectRegion={(regionId) => {
-                setSelectedRegionId(regionId)
+                setActiveRegionId(regionId)
+                setActiveQuickAccessId(null)
                 setSheetQuickAccessId(null)
                 setSheetRegionId(regionId)
               }}
@@ -175,6 +172,8 @@ export function SymptomsPage() {
                   key={item.id}
                   item={item}
                   onSelect={() => {
+                    setActiveRegionId(null)
+                    setActiveQuickAccessId(item.id)
                     setSheetRegionId(null)
                     setSheetQuickAccessId(item.id)
                   }}
@@ -187,7 +186,11 @@ export function SymptomsPage() {
             <button
               type="button"
               className="search-launch-card"
-              onClick={() => setFlowStep('search')}
+              onClick={() => {
+                setSheetRegionId(null)
+                setSheetQuickAccessId(null)
+                setFlowStep('search')
+              }}
             >
               <span className="search-launch-icon" aria-hidden="true">
                 <Search size={18} />
@@ -212,87 +215,6 @@ export function SymptomsPage() {
         />
       ) : null}
 
-      {flowStep === 'severity' && selectedSymptom ? (
-        <SeveritySelector
-          symptomName={selectedSymptom.name}
-          options={activeSeverityOptions}
-          selectedId={selectedSeverityId}
-          onBack={() => {
-            setSelectedSeverityId(null)
-            setFlowStep('select-region')
-          }}
-          onSelect={(optionId) => {
-            setSelectedSeverityId(optionId)
-
-            if (activeQuestions.length > 0) {
-              setFlowStep('questions')
-            } else {
-              setFlowStep('summary')
-            }
-          }}
-        />
-      ) : null}
-
-      {flowStep === 'questions' && selectedSymptom ? (
-        <QuestionRenderer
-          questions={activeQuestions}
-          answers={answers}
-          onBack={() => setFlowStep('severity')}
-          onSelectAnswer={(questionId, optionValue) => {
-            const nextAnswers = {
-              ...answers,
-              [questionId]: optionValue,
-            }
-
-            setAnswers(nextAnswers)
-
-            const isComplete = activeQuestions.every((question) =>
-              question.id === questionId ? optionValue : nextAnswers[question.id],
-            )
-
-            if (isComplete) {
-              setFlowStep('summary')
-            }
-          }}
-        />
-      ) : null}
-
-      {flowStep === 'summary' && selectedSymptom && selectedSeverity && canMoveToSummary ? (
-        <SummaryCard
-          symptomName={selectedSymptom.name}
-          severityLabel={selectedSeverity.summaryLabel}
-          answerSummaries={answerSummaries}
-          onBack={() => {
-            setFlowStep(activeQuestions.length > 0 ? 'questions' : 'severity')
-          }}
-          onConfirm={() => {
-            const record: SymptomRecord = {
-              id: createSymptomRecordId(),
-              patientId: patient.id,
-              symptomId: selectedSymptom.id,
-              symptomName: selectedSymptom.name,
-              regionId: selectedSymptom.regionId,
-              severityId: selectedSeverity.id,
-              severityLabel: selectedSeverity.summaryLabel,
-              severityLevel: selectedSeverity.severityLevel,
-              answers,
-              createdAt: new Date().toISOString(),
-            }
-
-            saveSymptomRecord(record)
-            setSavedRecord(record)
-            setFlowStep('success')
-          }}
-        />
-      ) : null}
-
-      {flowStep === 'success' && selectedSymptom && savedRecord ? (
-        <SuccessScreen
-          symptomName={`${selectedSymptom.name}: ${savedRecord.severityLabel}`}
-          successMessage={selectedSymptom.successMessage}
-        />
-      ) : null}
-
       <SymptomBottomSheet
         open={sheetRegionId !== null || sheetQuickAccessId !== null}
         title="Elija el sintoma que esta experimentando"
@@ -307,14 +229,140 @@ export function SymptomsPage() {
           chooseSymptom(symptom)
         }}
       />
+
+      {overlayStep ? (
+        <div className="bottom-sheet-layer symptom-flow-layer" role="presentation">
+          <div
+            className="bottom-sheet-backdrop symptom-flow-backdrop"
+            onClick={() => {
+              if (flowStep === 'severity') {
+                reopenSymptomPicker()
+              }
+            }}
+          />
+          <section
+            className="bottom-sheet symptom-flow-sheet"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="symptom-flow-title"
+          >
+            <div className="sheet-drag-handle" aria-hidden="true">
+              <span />
+            </div>
+
+            {flowStep === 'severity' && selectedSymptom ? (
+              <SeveritySelector
+                symptomName={selectedSymptom.name}
+                options={activeSeverityOptions}
+                selectedId={selectedSeverityId}
+                onBack={() => {
+                  setSelectedSeverityId(null)
+                  reopenSymptomPicker()
+                }}
+                onSelect={(optionId) => {
+                  setSelectedSeverityId(optionId)
+
+                  if (activeQuestions.length > 0) {
+                    setFlowStep('questions')
+                  } else {
+                    setFlowStep('summary')
+                  }
+                }}
+              />
+            ) : null}
+
+            {flowStep === 'questions' && selectedSymptom ? (
+              <QuestionRenderer
+                questions={activeQuestions}
+                answers={answers}
+                onBack={() => setFlowStep('severity')}
+                onSelectAnswer={(questionId, optionValue) => {
+                  const nextAnswers = {
+                    ...answers,
+                    [questionId]: optionValue,
+                  }
+
+                  setAnswers(nextAnswers)
+
+                  const isComplete = activeQuestions.every((question) =>
+                    question.id === questionId ? optionValue : nextAnswers[question.id],
+                  )
+
+                  if (isComplete) {
+                    setFlowStep('summary')
+                  }
+                }}
+              />
+            ) : null}
+
+            {flowStep === 'summary' && selectedSymptom && selectedSeverity && canMoveToSummary ? (
+              <SummaryCard
+                symptomName={selectedSymptom.name}
+                severityLabel={selectedSeverity.summaryLabel}
+                answerSummaries={answerSummaries}
+                onBack={() => {
+                  setFlowStep(activeQuestions.length > 0 ? 'questions' : 'severity')
+                }}
+                onConfirm={() => {
+                  const record: SymptomRecord = {
+                    id: createSymptomRecordId(),
+                    patientId: patient.id,
+                    symptomId: selectedSymptom.id,
+                    symptomName: selectedSymptom.name,
+                    regionId: selectedSymptom.regionId,
+                    severityId: selectedSeverity.id,
+                    severityLabel: selectedSeverity.summaryLabel,
+                    severityLevel: selectedSeverity.severityLevel,
+                    answers,
+                    createdAt: new Date().toISOString(),
+                  }
+
+                  saveSymptomRecord(record)
+                  setSavedRecord(record)
+                  setFlowStep('success')
+                }}
+              />
+            ) : null}
+
+            {flowStep === 'success' && selectedSymptom && savedRecord ? (
+              <SuccessScreen
+                symptomName={`${selectedSymptom.name}: ${savedRecord.severityLabel}`}
+                successMessage={selectedSymptom.successMessage}
+                onManageAgain={() => {
+                  setSelectedSymptom(null)
+                  setSelectedSeverityId(null)
+                  setAnswers({})
+                  setSavedRecord(null)
+                  setActiveRegionId(null)
+                  setActiveQuickAccessId(null)
+                  setSheetRegionId(null)
+                  setSheetQuickAccessId(null)
+                  setFlowStep('select-region')
+                }}
+              />
+            ) : null}
+          </section>
+        </div>
+      ) : null}
     </main>
   )
 
   function chooseSymptom(symptom: SymptomDefinition) {
+    setSheetRegionId(null)
     setSelectedSymptom(symptom)
     setSelectedSeverityId(null)
     setAnswers({})
     setSavedRecord(null)
     setFlowStep('severity')
+  }
+
+  function reopenSymptomPicker() {
+    setFlowStep('select-region')
+    setSelectedSymptom(null)
+    setSelectedSeverityId(null)
+    setAnswers({})
+    setSavedRecord(null)
+    setSheetRegionId(activeRegionId)
+    setSheetQuickAccessId(activeQuickAccessId)
   }
 }

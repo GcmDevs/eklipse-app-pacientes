@@ -723,7 +723,7 @@ svg {
 .hero-card,
 .content-block,
 .emergency-card {
-  margin-bottom: 24px;
+  margin-bottom: 28px;
 }
 
 .avatar-badge {
@@ -738,49 +738,77 @@ svg {
 }
 
 .hero-card {
-  padding: 30px 32px;
+  padding: 22px 24px;
   display: grid;
   grid-template-columns: minmax(0, 1.2fr) minmax(240px, 0.8fr);
-  gap: 20px;
+  gap: 18px;
   background:
     radial-gradient(circle at top right, rgba(74, 166, 162, 0.2), transparent 35%),
     linear-gradient(160deg, #ffffff, #f7fbfb);
 }
 
 .hero-card-copy h2 {
-  margin-bottom: 12px;
-  font-size: clamp(2rem, 4vw, 3.2rem);
-  line-height: 1.04;
+  margin-bottom: 8px;
+  font-size: clamp(1.7rem, 3vw, 2.4rem);
+  line-height: 1.08;
 }
 
 .hero-card-copy p {
   margin: 0;
   max-width: 52ch;
-  font-size: 1.02rem;
+  font-size: 0.96rem;
 }
 
 .hero-card-aside {
   display: grid;
-  gap: 12px;
+  gap: 10px;
   align-content: center;
 }
 
 .hero-note {
-  padding: 14px 16px;
+  padding: 10px 12px;
   border-radius: var(--radius-sm);
   background: rgba(255, 255, 255, 0.85);
   border: 1px solid rgba(215, 228, 232, 0.95);
   color: var(--color-primary-strong);
   font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.home-summary-strip {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 28px;
+}
+
+.home-summary-item {
+  padding: 16px 18px;
+  border-radius: 18px;
+  border: 1px solid rgba(215, 228, 232, 0.95);
+  background: rgba(255, 255, 255, 0.86);
+  display: grid;
+  gap: 4px;
+}
+
+.home-summary-item strong {
+  color: var(--color-primary-strong);
+  font-size: 1.4rem;
+  line-height: 1;
+}
+
+.home-summary-item span {
+  color: var(--color-text-muted);
+  font-size: 0.92rem;
 }
 
 .section-heading {
-  margin-bottom: 16px;
+  margin-bottom: 14px;
 }
 
 .section-heading h3 {
   margin-bottom: 6px;
-  font-size: 1.6rem;
+  font-size: 1.35rem;
 }
 
 .section-heading p {
@@ -798,9 +826,9 @@ svg {
 }
 
 .info-card {
-  padding: 22px;
+  padding: 18px;
   display: grid;
-  gap: 18px;
+  gap: 14px;
   min-height: 100%;
 }
 
@@ -819,12 +847,13 @@ svg {
 }
 
 .card-copy h4 {
-  margin-bottom: 8px;
-  font-size: 1.2rem;
+  margin-bottom: 6px;
+  font-size: 1.08rem;
 }
 
 .card-copy p {
   margin: 0;
+  font-size: 0.94rem;
 }
 
 .detail-list {
@@ -875,11 +904,11 @@ svg {
 }
 
 .emergency-card {
-  padding: 24px 26px;
+  padding: 20px 22px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 20px;
+  gap: 18px;
   background: linear-gradient(180deg, #fffaf9, #ffffff);
 }
 
@@ -896,13 +925,14 @@ svg {
 
 .emergency-card h3 {
   margin-bottom: 8px;
-  font-size: 1.5rem;
+  font-size: 1.28rem;
 }
 
 .emergency-card p {
   margin: 0;
   color: var(--color-text-muted);
   max-width: 60ch;
+  font-size: 0.95rem;
 }
 
 .module-hero,
@@ -1013,6 +1043,20 @@ svg {
   box-shadow: 0 6px 16px rgba(31, 82, 104, 0.04);
 }
 
+.mood-option {
+  position: relative;
+  min-height: 220px;
+  justify-items: center;
+  align-content: start;
+  gap: 14px;
+  text-align: center;
+  overflow: hidden;
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
 .mood-option:hover,
 .influence-option:hover {
   border-color: rgba(31, 82, 104, 0.26);
@@ -1028,14 +1072,43 @@ svg {
   background: linear-gradient(180deg, rgba(237, 246, 247, 0.88), #ffffff);
 }
 
-.mood-option-icon {
-  width: 40px;
-  height: 40px;
-  border-radius: 14px;
+.mood-option-selected {
+  box-shadow:
+    0 16px 34px rgba(31, 82, 104, 0.1),
+    inset 0 0 0 2px rgba(74, 166, 162, 0.42);
+}
+
+.mood-option-check {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
   display: grid;
   place-items: center;
-  background: var(--mood-icon-bg, var(--color-secondary-soft));
-  color: var(--mood-icon-color, var(--color-primary));
+  background: rgba(255, 255, 255, 0.96);
+  color: var(--color-secondary);
+  box-shadow: 0 6px 14px rgba(31, 82, 104, 0.08);
+}
+
+.mood-option-face {
+  width: 72px;
+  height: 72px;
+  display: grid;
+  place-items: center;
+  transform: translateY(0);
+  transition: transform 0.2s ease;
+}
+
+.mood-option:hover .mood-option-face,
+.mood-option-selected .mood-option-face {
+  transform: translateY(-2px) scale(1.03);
+}
+
+.mood-face-svg {
+  width: 72px;
+  height: 72px;
 }
 
 .mood-option-copy,
@@ -1045,7 +1118,8 @@ svg {
 }
 
 .mood-option-copy {
-  gap: 6px;
+  gap: 8px;
+  justify-items: center;
 }
 
 .mood-option-copy strong,
@@ -1056,6 +1130,7 @@ svg {
 
 .mood-option-copy span {
   color: var(--color-text-muted);
+  max-width: 19ch;
 }
 
 .selection-indicator {
@@ -1637,6 +1712,49 @@ svg {
   overflow: auto;
 }
 
+.symptom-flow-layer {
+  z-index: 56;
+}
+
+.symptom-flow-backdrop {
+  background: rgba(17, 24, 39, 0.34);
+}
+
+.symptom-flow-sheet {
+  min-height: 56vh;
+  max-height: 76vh;
+  padding: 14px 20px 24px;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.99), rgba(248, 251, 252, 0.99)),
+    #ffffff;
+  box-shadow: 0 -18px 40px rgba(17, 24, 39, 0.16);
+}
+
+.symptom-flow-sheet > .symptom-step-card,
+.symptom-flow-sheet > .mood-feedback-card {
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  box-shadow: none;
+}
+
+.symptom-flow-sheet .section-heading {
+  gap: 8px;
+  margin-bottom: 18px;
+}
+
+.symptom-flow-sheet .section-heading h2,
+.symptom-flow-sheet .mood-feedback-card h2 {
+  margin: 0;
+}
+
+.symptom-flow-sheet .feedback-actions {
+  margin-top: 20px;
+}
+
 .sheet-drag-handle {
   width: 100%;
   display: grid;
@@ -1995,6 +2113,10 @@ svg {
   .quick-access-grid {
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
+
+  .home-summary-strip {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
 }
 
 @media (max-width: 720px) {
@@ -2098,6 +2220,20 @@ svg {
     font-size: 2rem;
   }
 
+  .hero-card {
+    padding: 18px 18px;
+    gap: 14px;
+  }
+
+  .home-summary-strip {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .home-summary-item {
+    padding: 14px 16px;
+  }
+
   .profile-data-row {
     grid-template-columns: 1fr;
     gap: 6px;
@@ -2174,10 +2310,23 @@ svg {
     gap: 8px;
   }
 
-  .mood-option-icon {
-    width: 34px;
-    height: 34px;
-    border-radius: 12px;
+  .mood-option {
+    min-height: 186px;
+    padding: 12px 10px;
+    gap: 10px;
+  }
+
+  .mood-option-face,
+  .mood-face-svg {
+    width: 60px;
+    height: 60px;
+  }
+
+  .mood-option-check {
+    top: 10px;
+    right: 10px;
+    width: 24px;
+    height: 24px;
   }
 
   .mood-option-copy strong,

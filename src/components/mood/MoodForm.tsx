@@ -170,11 +170,9 @@ export function MoodForm() {
             {moodOptions.map((option) => (
               <MoodOptionCard
                 key={option.value}
-                icon={option.icon}
+                face={option.face}
                 label={option.value}
                 helper={option.helper}
-                iconColor={option.iconColor}
-                iconBackground={option.iconBackground}
                 selected={mood === option.value}
                 onSelect={() => {
                   setMood(option.value)

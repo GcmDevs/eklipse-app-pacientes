@@ -26,6 +26,21 @@ export function HomePage() {
         </div>
       </section>
 
+      <section className="home-summary-strip" aria-label="Resumen general">
+        <article className="home-summary-item">
+          <strong>{invitations.length}</strong>
+          <span>Invitaciones activas</span>
+        </article>
+        <article className="home-summary-item">
+          <strong>{announcements.length}</strong>
+          <span>Anuncios recientes</span>
+        </article>
+        <article className="home-summary-item">
+          <strong>24/7</strong>
+          <span>Canales de apoyo</span>
+        </article>
+      </section>
+
       <section className="content-block">
         <div className="section-heading">
           <h3>Invitaciones para ti</h3>
