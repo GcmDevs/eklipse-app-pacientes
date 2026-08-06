@@ -1,6 +1,13 @@
 import { CircleHelp, History } from 'lucide-react'
 import { createBrowserRouter, Navigate } from 'react-router-dom'
+import { AdminLayout } from '@/components/layout/AdminLayout'
 import { MainLayout } from '@/components/layout/MainLayout'
+import { AdminDashboardPage } from '@/pages/admin/AdminDashboardPage'
+import { AdminInvitationFormPage } from '@/pages/admin/AdminInvitationFormPage'
+import { AdminInvitationsPage } from '@/pages/admin/AdminInvitationsPage'
+import { AdminPatientDetailPage } from '@/pages/admin/AdminPatientDetailPage'
+import { AdminPatientsPage } from '@/pages/admin/AdminPatientsPage'
+import { AdminProfilePage } from '@/pages/admin/AdminProfilePage'
 import { LoginPage } from '@/pages/auth/LoginPage'
 import { ComingSoonPage } from '@/pages/home/ComingSoonPage'
 import { HomePage } from '@/pages/home/HomePage'
@@ -12,11 +19,12 @@ import { ProfilePage } from '@/pages/profile/ProfilePage'
 import { SymptomsPage } from '@/pages/symptoms/SymptomsPage'
 import { ProtectedRoute } from '@/routes/ProtectedRoute'
 import { PublicOnlyRoute } from '@/routes/PublicOnlyRoute'
+import { RootRedirect } from '@/routes/RootRedirect'
 
 export const appRouter = createBrowserRouter([
   {
     path: '/',
-    element: <Navigate to="/inicio" replace />,
+    element: <RootRedirect />,
   },
   {
     element: <PublicOnlyRoute />,
@@ -28,7 +36,7 @@ export const appRouter = createBrowserRouter([
     ],
   },
   {
-    element: <ProtectedRoute />,
+    element: <ProtectedRoute allowedRoles={['patient']} />,
     children: [
       {
         element: <MainLayout />,
@@ -69,7 +77,7 @@ export const appRouter = createBrowserRouter([
               <ComingSoonPage
                 icon={CircleHelp}
                 title="Preguntas frecuentes"
-                description="Encontraras informacion util para acompanarte durante tu tratamiento."
+                description="Encontraras informacion util para acompanarte durante tu proceso."
               />
             ),
           },
@@ -84,5 +92,51 @@ export const appRouter = createBrowserRouter([
         ],
       },
     ],
+  },
+  {
+    element: <ProtectedRoute allowedRoles={['admin']} />,
+    children: [
+      {
+        element: <AdminLayout />,
+        children: [
+          {
+            path: '/admin',
+            element: <Navigate to="/admin/inicio" replace />,
+          },
+          {
+            path: '/admin/inicio',
+            element: <AdminDashboardPage />,
+          },
+          {
+            path: '/admin/pacientes',
+            element: <AdminPatientsPage />,
+          },
+          {
+            path: '/admin/pacientes/:patientId',
+            element: <AdminPatientDetailPage />,
+          },
+          {
+            path: '/admin/invitaciones',
+            element: <AdminInvitationsPage />,
+          },
+          {
+            path: '/admin/invitaciones/nueva',
+            element: <AdminInvitationFormPage />,
+          },
+          {
+            path: '/admin/invitaciones/:invitationId/editar',
+            element: <AdminInvitationFormPage />,
+          },
+          {
+            path: '/admin/perfil',
+            element: <AdminProfilePage />,
+          },
+        ],
+      },
+    ],
+  },
+  {
+    path: '*',
+    element: <NotFoundPage />,
   },
 ])

@@ -5,7 +5,7 @@ import {
   defaultMockPatient,
   findMockPatientById,
 } from '@/data/mockPatient'
-import type { AuthSession } from '@/types/auth'
+import type { AuthSession, UserRole } from '@/types/auth'
 import type { Patient } from '@/types/patient'
 
 const AUTH_STORAGE_KEY = 'eklipse-auth-session'
@@ -60,10 +60,26 @@ export function isAuthenticated() {
   return getAuthSession() !== null
 }
 
+export function getCurrentUserRole(): UserRole | null {
+  return getAuthSession()?.user.role ?? null
+}
+
+export function isAdminSession() {
+  return getCurrentUserRole() === 'admin'
+}
+
+export function isPatientSession() {
+  return getCurrentUserRole() === 'patient'
+}
+
+export function getDefaultRouteForRole(role: UserRole | null) {
+  return role === 'admin' ? '/admin/inicio' : '/inicio'
+}
+
 export function getCurrentPatient(): Patient {
   const session = getAuthSession()
 
-  if (!session) {
+  if (!session || !session.user.patientId) {
     return defaultMockPatient
   }
 

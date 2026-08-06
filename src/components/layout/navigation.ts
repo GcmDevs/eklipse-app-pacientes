@@ -3,11 +3,15 @@ import {
   Activity,
   CalendarDays,
   CircleHelp,
+  ClipboardList,
   History,
   House,
+  LayoutDashboard,
   Smile,
   UserRound,
+  Users,
 } from 'lucide-react'
+import type { UserRole } from '@/types/auth'
 
 export type NavigationItem = {
   to: string
@@ -17,7 +21,7 @@ export type NavigationItem = {
   icon: LucideIcon
 }
 
-export const navigationItems: NavigationItem[] = [
+export const patientNavigationItems: NavigationItem[] = [
   {
     to: '/inicio',
     label: 'Inicio',
@@ -27,9 +31,9 @@ export const navigationItems: NavigationItem[] = [
   },
   {
     to: '/estado-animo',
-    label: 'Como me siento hoy?',
+    label: 'Como me siento hoy',
     shortLabel: 'Animo',
-    title: 'Como me siento hoy?',
+    title: 'Como me siento hoy',
     icon: Smile,
   },
   {
@@ -69,7 +73,60 @@ export const navigationItems: NavigationItem[] = [
   },
 ]
 
-export function getPageTitle(pathname: string) {
-  const item = navigationItems.find((entry) => entry.to === pathname)
-  return item?.title ?? 'Ruta no encontrada'
+export const adminNavigationItems: NavigationItem[] = [
+  {
+    to: '/admin/inicio',
+    label: 'Inicio',
+    shortLabel: 'Inicio',
+    title: 'Panel clinico',
+    icon: LayoutDashboard,
+  },
+  {
+    to: '/admin/pacientes',
+    label: 'Pacientes',
+    shortLabel: 'Pacientes',
+    title: 'Monitoreo de pacientes',
+    icon: Users,
+  },
+  {
+    to: '/admin/invitaciones',
+    label: 'Invitaciones',
+    shortLabel: 'Invitaciones',
+    title: 'Gestion de invitaciones',
+    icon: ClipboardList,
+  },
+  {
+    to: '/admin/perfil',
+    label: 'Mi perfil',
+    shortLabel: 'Perfil',
+    title: 'Perfil administrador',
+    icon: UserRound,
+  },
+]
+
+export function getNavigationItemsByRole(role: UserRole) {
+  return role === 'admin' ? adminNavigationItems : patientNavigationItems
+}
+
+export function getPageTitle(pathname: string, role: UserRole) {
+  const navigationItems = getNavigationItemsByRole(role)
+  const exactMatch = navigationItems.find((entry) => entry.to === pathname)
+
+  if (exactMatch) {
+    return exactMatch.title
+  }
+
+  if (role === 'admin' && pathname.startsWith('/admin/pacientes/')) {
+    return 'Detalle del paciente'
+  }
+
+  if (role === 'admin' && pathname === '/admin/invitaciones/nueva') {
+    return 'Nueva invitacion'
+  }
+
+  if (role === 'admin' && pathname.includes('/admin/invitaciones/') && pathname.endsWith('/editar')) {
+    return 'Editar invitacion'
+  }
+
+  return 'Ruta no encontrada'
 }

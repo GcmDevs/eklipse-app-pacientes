@@ -9,7 +9,12 @@ import {
   Users,
 } from 'lucide-react'
 import { Link } from 'react-router-dom'
-import { invitations } from '@/data/invitations'
+import {
+  getInvitationDateLabel,
+  getInvitationTimeLabel,
+  getInvitationTimingStatus,
+  getVisibleInvitationsForCurrentUser,
+} from '@/lib/invitations'
 
 type InvitationTab = 'all' | 'upcoming' | 'past'
 
@@ -21,22 +26,28 @@ const tabs: Array<{ id: InvitationTab; label: string }> = [
 
 export function InvitationsPage() {
   const [activeTab, setActiveTab] = useState<InvitationTab>('all')
+  const invitations = getVisibleInvitationsForCurrentUser()
 
   const visibleInvitations = useMemo(() => {
     const orderedInvitations = [...invitations].sort((left, right) => {
-      if (left.status === right.status) {
+      const leftStatus = getInvitationTimingStatus(left)
+      const rightStatus = getInvitationTimingStatus(right)
+
+      if (leftStatus === rightStatus) {
         return 0
       }
 
-      return left.status === 'upcoming' ? -1 : 1
+      return leftStatus === 'upcoming' ? -1 : 1
     })
 
     if (activeTab === 'all') {
       return orderedInvitations
     }
 
-    return orderedInvitations.filter((invitation) => invitation.status === activeTab)
-  }, [activeTab])
+    return orderedInvitations.filter(
+      (invitation) => getInvitationTimingStatus(invitation) === activeTab,
+    )
+  }, [activeTab, invitations])
 
   return (
     <main className="page-shell invitation-page">
@@ -89,11 +100,11 @@ export function InvitationsPage() {
 
               <div className="invitation-list-copy">
                 <strong>{invitation.title}</strong>
-                <span>{`${invitation.date} - ${invitation.time}`}</span>
+                <span>{`${getInvitationDateLabel(invitation)} - ${getInvitationTimeLabel(invitation)}`}</span>
               </div>
 
               <div className="invitation-list-end">
-                {invitation.status === 'upcoming' ? (
+                {getInvitationTimingStatus(invitation) === 'upcoming' ? (
                   <span
                     className={`invitation-status-pill invitation-status-pill-${invitation.accent}`}
                   >
@@ -108,6 +119,13 @@ export function InvitationsPage() {
               </div>
             </Link>
           ))}
+
+          {visibleInvitations.length === 0 ? (
+            <article className="admin-empty-state">
+              <strong>No hay invitaciones disponibles para tu especialidad.</strong>
+              <span>Tu equipo podra publicar nuevas actividades para ti mas adelante.</span>
+            </article>
+          ) : null}
         </section>
       </section>
     </main>

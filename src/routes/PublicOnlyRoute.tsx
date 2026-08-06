@@ -1,9 +1,9 @@
 import { Navigate, Outlet } from 'react-router-dom'
-import { isAuthenticated } from '@/lib/auth'
+import { getDefaultRouteForRole, getCurrentUserRole, isAuthenticated } from '@/lib/auth'
 
 export function PublicOnlyRoute() {
   if (isAuthenticated()) {
-    return <Navigate to="/inicio" replace />
+    return <Navigate to={getDefaultRouteForRole(getCurrentUserRole())} replace />
   }
 
   return <Outlet />

@@ -1,19 +1,29 @@
-import { PanelLeftClose, PanelLeftOpen, Sparkles } from 'lucide-react'
+import {
+  Headset,
+  LogOut,
+  Sprout,
+} from 'lucide-react'
 import { NavLink } from 'react-router-dom'
-import { navigationItems } from './navigation'
+import type { NavigationItem } from './navigation'
 
 type SidebarProps = {
-  collapsed: boolean
   mobileOpen: boolean
-  onToggleCollapse: () => void
+  navigationItems: NavigationItem[]
+  brandTitle: string
+  brandSubtitle: string
+  badgeCount?: number
+  roleLabel: string
   onCloseMobile: () => void
   onLogout: () => void
 }
 
 export function Sidebar({
-  collapsed,
   mobileOpen,
-  onToggleCollapse,
+  navigationItems,
+  brandTitle,
+  brandSubtitle,
+  badgeCount = 0,
+  roleLabel,
   onCloseMobile,
   onLogout,
 }: SidebarProps) {
@@ -25,34 +35,19 @@ export function Sidebar({
         aria-hidden="true"
       />
       <aside
-        className={
-          mobileOpen
-            ? 'sidebar sidebar-mobile-open'
-            : collapsed
-              ? 'sidebar sidebar-collapsed'
-              : 'sidebar'
-        }
+        className={mobileOpen ? 'sidebar sidebar-mobile-open' : 'sidebar'}
         aria-label="Navegacion principal"
       >
         <div className="sidebar-top">
           <div className="sidebar-brand">
             <div className="brand-mark brand-mark-small" aria-hidden="true">
-              <Sparkles size={18} />
+              <Sprout size={18} />
             </div>
-            <div className={collapsed ? 'sidebar-brand-copy sidebar-brand-copy-hidden' : 'sidebar-brand-copy'}>
-              <strong>Eklipse Paciente</strong>
-              <span>Seguimiento oncologico</span>
+            <div className="sidebar-brand-copy">
+              <strong>{brandTitle}</strong>
+              <span>{brandSubtitle}</span>
             </div>
           </div>
-
-          <button
-            type="button"
-            className="icon-button sidebar-toggle desktop-only"
-            onClick={onToggleCollapse}
-            aria-label={collapsed ? 'Expandir menu lateral' : 'Colapsar menu lateral'}
-          >
-            {collapsed ? <PanelLeftOpen size={18} /> : <PanelLeftClose size={18} />}
-          </button>
         </div>
 
         <nav className="sidebar-nav">
@@ -74,9 +69,12 @@ export function Sidebar({
                     onClick={onCloseMobile}
                   >
                     <Icon size={20} aria-hidden="true" />
-                    <span className={collapsed ? 'sidebar-link-text sidebar-link-text-hidden' : 'sidebar-link-text'}>
-                      {item.label}
-                    </span>
+                    <span className="sidebar-link-text">{item.label}</span>
+                    {badgeCount > 0 && item.to.includes('/invitaciones') ? (
+                      <span className="sidebar-link-badge" aria-hidden="true">
+                        {badgeCount}
+                      </span>
+                    ) : null}
                   </NavLink>
                 </li>
               )
@@ -85,6 +83,16 @@ export function Sidebar({
         </nav>
 
         <div className="sidebar-footer">
+          <button type="button" className="sidebar-help-card">
+            <span className="sidebar-help-icon" aria-hidden="true">
+              <Headset size={18} />
+            </span>
+            <span className="sidebar-help-copy">
+              <strong>Necesitas ayuda?</strong>
+              <small>{roleLabel === 'Administrador' ? 'Administra y acompana con claridad' : 'Estamos aqui para ti'}</small>
+            </span>
+          </button>
+
           <button
             type="button"
             className="sidebar-link sidebar-link-button"
@@ -92,40 +100,9 @@ export function Sidebar({
             onClick={onLogout}
           >
             <span className="sidebar-link-icon-wrap">
-              <svg
-                aria-hidden="true"
-                viewBox="0 0 24 24"
-                className="logout-icon"
-              >
-                <path
-                  d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-                <path
-                  d="m16 17 5-5-5-5"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-                <path
-                  d="M21 12H9"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
+              <LogOut size={18} aria-hidden="true" className="logout-icon" />
             </span>
-            <span className={collapsed ? 'sidebar-link-text sidebar-link-text-hidden' : 'sidebar-link-text'}>
-              Cerrar sesion
-            </span>
+            <span className="sidebar-link-text">Cerrar sesion</span>
           </button>
         </div>
       </aside>

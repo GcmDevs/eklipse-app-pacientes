@@ -1,6 +1,9 @@
+export type UserRole = 'patient' | 'admin'
+
 export type AuthUser = {
   id: string
-  patientId: string
+  role: UserRole
+  patientId: string | null
   document: string
   name: string
   initials: string

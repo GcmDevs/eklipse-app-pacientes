@@ -8,8 +8,21 @@ type MockAuthAccount = {
 }
 
 export const mockAuthAccounts: MockAuthAccount[] = [
-  createMockAccount('123456789', '123456789', 'female'),
-  createMockAccount('987654321', '987654321', 'male'),
+  createMockPatientAccount('123456789', '123456789', 'female'),
+  createMockPatientAccount('987654321', '987654321', 'male'),
+  {
+    document: '111111111',
+    password: '111111111',
+    user: {
+      id: 'admin-daniela-001',
+      role: 'admin',
+      patientId: null,
+      document: '111111111',
+      name: 'Daniela Ruiz',
+      initials: 'DR',
+      avatarVariant: 'female',
+    },
+  },
 ]
 
 export function findMockAccountByCredentials(document: string, password: string) {
@@ -21,7 +34,7 @@ export function findMockAccountByCredentials(document: string, password: string)
   )
 }
 
-function createMockAccount(
+function createMockPatientAccount(
   document: string,
   password: string,
   avatarVariant: 'male' | 'female',
@@ -37,6 +50,7 @@ function createMockAccount(
     password,
     user: {
       id: patient.id,
+      role: 'patient',
       patientId: patient.id,
       document,
       name: patient.shortName,

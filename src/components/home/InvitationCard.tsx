@@ -1,4 +1,5 @@
 import { CalendarDays, Clock3, MapPin } from 'lucide-react'
+import { getInvitationDateLabel, getInvitationTimeLabel } from '@/lib/invitations'
 import type { Invitation } from '@/types/invitation'
 
 type InvitationCardProps = {
@@ -21,14 +22,14 @@ export function InvitationCard({ invitation }: InvitationCardProps) {
             <CalendarDays size={16} aria-hidden="true" />
             Fecha
           </dt>
-          <dd>{invitation.date}</dd>
+          <dd>{getInvitationDateLabel(invitation)}</dd>
         </div>
         <div>
           <dt>
             <Clock3 size={16} aria-hidden="true" />
             Hora
           </dt>
-          <dd>{invitation.time}</dd>
+          <dd>{getInvitationTimeLabel(invitation)}</dd>
         </div>
         <div>
           <dt>

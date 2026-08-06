@@ -1,7 +1,7 @@
 import { useId, useState } from 'react'
 import { Eye, EyeOff, LockKeyhole, ShieldCheck } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
-import { authenticateUser, saveAuthSession } from '@/lib/auth'
+import { authenticateUser, getDefaultRouteForRole, saveAuthSession } from '@/lib/auth'
 
 type FormErrors = {
   document?: string
@@ -61,7 +61,7 @@ export function LoginForm() {
     }
 
     saveAuthSession(session)
-    navigate('/inicio', { replace: true })
+    navigate(getDefaultRouteForRole(session.user.role), { replace: true })
   }
 
   return (
@@ -74,7 +74,7 @@ export function LoginForm() {
           <div>
             <p className="eyebrow">Eklipse Paciente</p>
             <span className="brand-subtitle">
-              Acompanamiento y seguimiento oncologico
+              Acompanamiento y seguimiento en salud
             </span>
           </div>
         </div>
@@ -167,6 +167,7 @@ export function LoginForm() {
           <p className="security-note">
             Tu informacion es privada y esta protegida.
           </p>
+          <p className="brand-subtitle">Admin demo: 111111111 / 111111111</p>
           <p className="warning-note">
             Esta aplicacion no reemplaza un servicio de urgencias.
           </p>

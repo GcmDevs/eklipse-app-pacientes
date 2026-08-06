@@ -3,20 +3,24 @@ import { Link } from 'react-router-dom'
 import { useEffect, useRef, useState } from 'react'
 
 type AppHeaderProps = {
+  appLabel?: string
   pageTitle: string
   userName: string
   initials: string
+  profilePath?: string
+  roleLabel?: string
   onOpenMobileMenu: () => void
-  onToggleDesktopSidebar: () => void
   onLogout: () => void
 }
 
 export function AppHeader({
+  appLabel = 'Eklipse Paciente',
   pageTitle,
   userName,
   initials,
+  profilePath = '/perfil',
+  roleLabel = 'Paciente',
   onOpenMobileMenu,
-  onToggleDesktopSidebar,
   onLogout,
 }: AppHeaderProps) {
   const [menuOpen, setMenuOpen] = useState(false)
@@ -59,16 +63,8 @@ export function AppHeader({
         >
           <Menu size={20} />
         </button>
-        <button
-          type="button"
-          className="icon-button desktop-only"
-          aria-label="Alternar menu lateral"
-          onClick={onToggleDesktopSidebar}
-        >
-          <Menu size={20} />
-        </button>
         <div className="topbar-titles">
-          <p className="eyebrow">Eklipse Paciente</p>
+          <p className="eyebrow">{appLabel}</p>
           <h1>{pageTitle}</h1>
         </div>
       </div>
@@ -80,6 +76,7 @@ export function AppHeader({
           className="icon-button notifications-button"
           aria-label="Notificaciones"
         >
+          <span className="notifications-indicator" aria-hidden="true" />
           <Bell size={18} />
         </button>
 
@@ -96,7 +93,7 @@ export function AppHeader({
             </div>
             <div className="user-menu-copy">
               <span>{userName}</span>
-              <small>Paciente</small>
+              <small>{roleLabel}</small>
             </div>
             <ChevronDown size={16} aria-hidden="true" />
           </button>
@@ -104,7 +101,7 @@ export function AppHeader({
           {menuOpen ? (
             <div className="user-menu-popover" role="menu">
               <Link
-                to="/perfil"
+                to={profilePath}
                 className="user-menu-item"
                 role="menuitem"
                 onClick={() => setMenuOpen(false)}

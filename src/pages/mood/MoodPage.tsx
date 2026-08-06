@@ -19,11 +19,6 @@ export function MoodPage() {
         </button>
       </div>
 
-      <section className="mood-header">
-        <h2>Como te sientes hoy?</h2>
-        <p>Selecciona la opcion que mejor represente como te sientes.</p>
-      </section>
-
       <MoodForm />
     </main>
   )

@@ -1,43 +1,40 @@
-import { Bell, CalendarDays, ChevronRight, FileText, Headphones } from 'lucide-react'
+import { Bell, CalendarDays, ChevronRight, Headphones } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import homePortraitWoman from '@/assets/home-portrait-female.png'
 import homePortraitMan from '@/assets/home-portrait-male.png'
 import { announcements } from '@/data/announcements'
-import { invitations } from '@/data/invitations'
 import { getAuthSession } from '@/lib/auth'
+import {
+  getInvitationDateLabel,
+  getInvitationTimingStatus,
+  getUpcomingPublishedInvitationCountForCurrentUser,
+  getVisibleInvitationsForCurrentUser,
+} from '@/lib/invitations'
 
 export function HomePage() {
   const session = getAuthSession()
   const userName = session?.user.name ?? 'Paciente'
   const avatarVariant = session?.user.avatarVariant ?? 'female'
   const heroImage = avatarVariant === 'male' ? homePortraitMan : homePortraitWoman
-  const featuredInvitation = invitations[0]
+  const welcomeLabel = avatarVariant === 'male' ? 'Bienvenido' : 'Bienvenida'
+  const visibleInvitations = getVisibleInvitationsForCurrentUser()
+  const featuredInvitation =
+    visibleInvitations.find(
+      (invitation) =>
+        invitation.status === 'published' &&
+        getInvitationTimingStatus(invitation) === 'upcoming',
+    ) ?? null
 
   return (
     <main className="page-shell home-dashboard">
       <section className="home-hero-panel">
         <div className="home-hero-copy">
           <p className="eyebrow">Bienestar y acompanamiento</p>
-          <h2>Bienvenida, {userName}!</h2>
+          <h2>{welcomeLabel}, {userName}!</h2>
           <p>
-            Este espacio fue creado para acompanarte y mantenerte informada
+            Este espacio fue creado para acompanarte y mantener tu informacion clara
             durante tu proceso.
           </p>
-
-          <div className="home-hero-benefits">
-            <article className="home-benefit-card">
-              <span className="home-benefit-icon" aria-hidden="true">
-                <FileText size={18} />
-              </span>
-              <strong>Tu informacion se presenta con claridad</strong>
-            </article>
-            <article className="home-benefit-card">
-              <span className="home-benefit-icon" aria-hidden="true">
-                <Bell size={18} />
-              </span>
-              <strong>Recibe avisos importantes en un solo lugar</strong>
-            </article>
-          </div>
         </div>
 
         <div className="home-hero-visual" aria-hidden="true">
@@ -50,7 +47,7 @@ export function HomePage() {
           <span className="home-summary-icon" aria-hidden="true">
             <CalendarDays size={18} />
           </span>
-          <strong>{invitations.length}</strong>
+          <strong>{getUpcomingPublishedInvitationCountForCurrentUser()}</strong>
           <span>Invitaciones activas</span>
         </article>
         <article className="home-summary-item home-summary-item-amber">
@@ -74,20 +71,32 @@ export function HomePage() {
           <h3>Invitaciones para ti</h3>
           <p>Encuentros y actividades pensadas para acompanarte este mes.</p>
         </div>
-        <Link
-          to="/invitaciones"
-          className="home-featured-invitation"
-        >
-          <div className="home-featured-icon" aria-hidden="true">
-            <CalendarDays size={20} />
-          </div>
-          <div className="home-featured-copy">
-            <strong>{featuredInvitation.title}</strong>
-            <p>{featuredInvitation.description}</p>
-            <span>Fecha: {featuredInvitation.date}</span>
-          </div>
-          <ChevronRight size={18} aria-hidden="true" />
-        </Link>
+        {featuredInvitation ? (
+          <Link
+            to="/invitaciones"
+            className="home-featured-invitation"
+          >
+            <div className="home-featured-icon" aria-hidden="true">
+              <CalendarDays size={20} />
+            </div>
+            <div className="home-featured-copy">
+              <strong>{featuredInvitation.title}</strong>
+              <p>{featuredInvitation.description}</p>
+              <span>Fecha: {getInvitationDateLabel(featuredInvitation)}</span>
+            </div>
+            <ChevronRight size={18} aria-hidden="true" />
+          </Link>
+        ) : (
+          <article className="home-featured-invitation home-featured-invitation-empty">
+            <div className="home-featured-icon" aria-hidden="true">
+              <CalendarDays size={20} />
+            </div>
+            <div className="home-featured-copy">
+              <strong>No hay invitaciones activas para tu especialidad</strong>
+              <p>Cuando publiquemos una nueva actividad, la veras aqui.</p>
+            </div>
+          </article>
+        )}
       </section>
     </main>
   )

@@ -8,12 +8,31 @@ import {
   UsersRound,
 } from 'lucide-react'
 import { Link, useParams } from 'react-router-dom'
-import { invitations } from '@/data/invitations'
+import {
+  getInvitationDateLabel,
+  getInvitationTimeLabel,
+  getVisibleInvitationsForCurrentUser,
+} from '@/lib/invitations'
 
 export function InvitationDetailPage() {
   const { invitationId } = useParams()
-  const invitation =
-    invitations.find((entry) => entry.id === invitationId) ?? invitations[0]
+  const visibleInvitations = getVisibleInvitationsForCurrentUser()
+  const invitation = visibleInvitations.find((entry) => entry.id === invitationId) ?? null
+
+  if (!invitation) {
+    return (
+      <main className="page-shell invitation-page invitation-detail-page">
+        <section className="invitation-shell">
+          <article className="admin-empty-state">
+            <strong>Esta invitacion no esta disponible para tu especialidad.</strong>
+            <Link to="/invitaciones" className="text-link">
+              Volver a invitaciones
+            </Link>
+          </article>
+        </section>
+      </main>
+    )
+  }
 
   return (
     <main className="page-shell invitation-page invitation-detail-page">
@@ -55,17 +74,14 @@ export function InvitationDetailPage() {
                 <CalendarDays size={16} />
                 Fecha
               </dt>
-              <dd>{invitation.date}</dd>
+              <dd>{getInvitationDateLabel(invitation)}</dd>
             </div>
             <div>
               <dt>
                 <Clock3 size={16} />
                 Hora
               </dt>
-              <dd>
-                {invitation.time}
-                {invitation.endTime ? ` - ${invitation.endTime}` : ''}
-              </dd>
+              <dd>{getInvitationTimeLabel(invitation)}</dd>
             </div>
             <div>
               <dt>

@@ -9,7 +9,7 @@ export function LoginPage() {
         </div>
         <div className="auth-copy">
           <p className="eyebrow">Eklipse Paciente</p>
-          <h1>Acompanamiento y seguimiento oncologico</h1>
+          <h1>Acompanamiento y seguimiento en salud</h1>
           <p className="auth-description">
             Un espacio pensado para mantener tu informacion cercana, clara y
             protegida en cada etapa de tu proceso.
@@ -17,7 +17,7 @@ export function LoginPage() {
           <ul className="auth-highlights" aria-label="Beneficios principales">
             <li>Acceso sencillo y seguro a tu espacio personal.</li>
             <li>Informacion importante presentada con claridad.</li>
-            <li>Base preparada para acompanarte desde cualquier dispositivo.</li>
+            <li>Base preparada para pacientes y administradores.</li>
           </ul>
         </div>
       </section>

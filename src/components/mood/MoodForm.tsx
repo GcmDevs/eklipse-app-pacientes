@@ -1,8 +1,11 @@
+import { FileLock2, Heart } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
+import homePortraitWoman from '@/assets/home-portrait-female.png'
+import homePortraitMan from '@/assets/home-portrait-male.png'
 import { influenceOptions } from '@/data/influence-options'
 import { moodMessages } from '@/data/mood-messages'
 import { moodOptions } from '@/data/mood-options'
-import { getCurrentPatient } from '@/lib/auth'
+import { getAuthSession, getCurrentPatient } from '@/lib/auth'
 import {
   getTodayMoodRecord,
   saveMoodRecord,
@@ -26,6 +29,7 @@ const COMMENT_LIMIT = 500
 
 export function MoodForm() {
   const patient = getCurrentPatient()
+  const session = getAuthSession()
   const [mood, setMood] = useState<MoodValue | null>(null)
   const [influence, setInfluence] = useState<InfluenceValue | null>(null)
   const [otherInfluence, setOtherInfluence] = useState('')
@@ -37,6 +41,8 @@ export function MoodForm() {
   )
   const [showCancelModal, setShowCancelModal] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const illustration =
+    session?.user.avatarVariant === 'male' ? homePortraitMan : homePortraitWoman
 
   useEffect(() => {
     if (!showCancelModal) {
@@ -158,14 +164,29 @@ export function MoodForm() {
   return (
     <>
       <form className="mood-form" onSubmit={handleSubmit} noValidate>
-        <section className="mood-section">
-          <div className="section-heading">
-            <h3>Selecciona tu estado de animo</h3>
-            <p>
-              Elige la opcion que mejor represente como te sientes en este
-              momento.
-            </p>
+        <section className="mood-section mood-stage-card mood-stage-card-intro">
+          <div className="mood-stage-hero">
+            <div className="section-heading mood-stage-heading">
+              <h3>Como te sientes hoy?</h3>
+              <p>
+                Cuentanos como te has sentido para poder acompanarte mejor.
+              </p>
+            </div>
+            <div className="mood-stage-illustration" aria-hidden="true">
+              <img src={illustration} alt="" className="mood-stage-portrait" />
+            </div>
           </div>
+
+          <div className="mood-stage-intro">
+            <span className="mood-stage-intro-icon" aria-hidden="true">
+              <Heart size={18} />
+            </span>
+            <div>
+              <strong>Selecciona tu estado de animo</strong>
+              <p>Elige la opcion que mejor represente como te sientes en este momento.</p>
+            </div>
+          </div>
+
           <div className="mood-options-grid" role="group" aria-label="Estados de animo disponibles">
             {moodOptions.map((option) => (
               <MoodOptionCard
@@ -175,19 +196,41 @@ export function MoodForm() {
                 helper={option.helper}
                 selected={mood === option.value}
                 onSelect={() => {
-                  setMood(option.value)
+                  setMood((current) => (current === option.value ? null : option.value))
                   setErrors((current) => ({ ...current, mood: undefined }))
                 }}
               />
             ))}
           </div>
           {errors.mood ? <p className="field-error">{errors.mood}</p> : null}
+
+          <section className="mood-support-banner" aria-label="Apoyo emocional">
+            <span className="mood-support-icon" aria-hidden="true">
+              <Heart size={18} />
+            </span>
+            <div>
+              <strong>No estas solo(a)</strong>
+              <p>Cada emocion es valida. Estamos aqui para apoyarte.</p>
+            </div>
+          </section>
         </section>
 
         <section
-          className={mood ? 'mood-section mood-section-visible' : 'mood-section mood-section-hidden'}
+          className={
+            mood
+              ? 'mood-section mood-stage-card mood-stage-card-detail mood-section-visible'
+              : 'mood-section mood-stage-card mood-stage-card-detail mood-section-hidden'
+          }
         >
-          <div className="section-heading">
+          <div className="mood-progress-row" aria-hidden="true">
+            <span className="mood-progress-line mood-progress-line-active" />
+            <span className="mood-progress-step mood-progress-step-active">1</span>
+            <span className="mood-progress-line mood-progress-line-active" />
+            <span className="mood-progress-step mood-progress-step-current">2</span>
+            <span className="mood-progress-line" />
+          </div>
+
+          <div className="section-heading mood-stage-heading">
             <h3>Que es lo que mas influye en como te sientes hoy?</h3>
             <p>Selecciona una sola opcion por ahora.</p>
           </div>
@@ -198,7 +241,10 @@ export function MoodForm() {
                 label={option}
                 selected={influence === option}
                 onSelect={() => {
-                  setInfluence(option)
+                  setInfluence((current) => (current === option ? null : option))
+                  if (influence === option) {
+                    setOtherInfluence('')
+                  }
                   setErrors((current) => ({
                     ...current,
                     influence: undefined,
@@ -235,7 +281,7 @@ export function MoodForm() {
         </section>
 
         <section className="mood-section">
-          <div className="section-heading">
+          <div className="section-heading mood-stage-heading">
             <h3>Quieres contarnos algo mas?</h3>
             <p>Este campo es opcional.</p>
           </div>
@@ -260,6 +306,16 @@ export function MoodForm() {
             {errors.comment ? (
               <p className="field-error">{errors.comment}</p>
             ) : null}
+          </div>
+        </section>
+
+        <section className="mood-privacy-card">
+          <span className="mood-privacy-icon" aria-hidden="true">
+            <FileLock2 size={18} />
+          </span>
+          <div>
+            <strong>Tu informacion es confidencial</strong>
+            <p>Todo lo que compartes es privado y esta protegido.</p>
           </div>
         </section>
 
