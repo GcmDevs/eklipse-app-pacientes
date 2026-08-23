@@ -1,0 +1,106 @@
+import * as jwt from 'jsonwebtoken';
+import { Injectable } from '@nestjs/common';
+import {
+  ESTADOS_USUARIO,
+  EstadoUsuarioCode,
+  estadoUsuarioTypeFactory,
+} from '@gen/security/domain/types/gen/usuarios';
+import { cryptoServices as crypto, IAuthToken, RSAServices } from '@common/application/services';
+import { _PrivSecEkUserOrm } from '@common/infrastructure/orm/pacient-as-user.orm';
+import { _PrivSecUserOrm } from '@common/infrastructure/orm/user.orm';
+import { gcmContextFactory } from '@common/domain/types';
+import { LoginUserDto } from '@gen/security/presentation/dtos';
+import { switchConn } from '@common/infrastructure/services';
+import { dataToUsuExtOrm } from '../factories';
+import { processEnv } from '@env';
+import { _PrivSecPatientOrm } from '@common/infrastructure/orm/pacient.orm';
+
+@Injectable()
+export class LoginUserImpl {
+  public async execute(body: LoginUserDto) {
+    if (body.isPatient) return this._asPaciente(body);
+    else throw new Error('Aun no existe gestión para usuarios medicos');
+  }
+
+  private async _asPaciente(body: LoginUserDto) {
+    const errorMsg = 'Usuario y/o clave incorrecta';
+    const { username, password } = body;
+    const context = gcmContextFactory(body.context);
+    const conn = switchConn(context);
+
+    const qr = conn.createQueryRunner();
+    const ekQr = conn.createQueryRunner();
+
+    await qr.connect();
+    await ekQr.connect();
+    try {
+      await qr.startTransaction();
+      await ekQr.startTransaction();
+
+      const pacienteRp = qr.manager.getRepository(_PrivSecPatientOrm);
+      const ekPacienteRp = ekQr.manager.getRepository(_PrivSecEkUserOrm);
+
+      const paciente = await pacienteRp.findOne({ where: { document: username } });
+      if (!paciente) throw new Error('El paciente no ha sido atendido en esta clinica');
+
+      let pacAsUser = await ekPacienteRp.findOne({
+        where: { document: username },
+        select: {
+          id: true,
+          document: true,
+          fullName: true,
+          password: true,
+          statusCode: true,
+          passwordIsReset: true,
+        },
+      });
+
+      if (!pacAsUser) {
+        pacAsUser = await dataToUsuExtOrm(paciente);
+        pacAsUser = await ekPacienteRp.save(pacAsUser);
+      }
+
+      if (pacAsUser.statusCode !== ESTADOS_USUARIO.ACTIVO.getCode()) {
+        throw new Error(
+          `Su usuario está en estado ${estadoUsuarioTypeFactory(pacAsUser.statusCode as EstadoUsuarioCode).getForHumans()}`
+        );
+      }
+
+      if (!pacAsUser.passwordIsReset) {
+        const matchingPass = await crypto.compare(password, pacAsUser.password);
+        if (!matchingPass) throw new Error(errorMsg);
+      }
+
+      const payload: IAuthToken = {
+        jti: RSAServices.encryptId(pacAsUser.id),
+        rst: pacAsUser.passwordIsReset,
+        dcm: paciente.document,
+        fnm: paciente.fullName,
+        rol: 'PACIENTE',
+        sub: body.context,
+      };
+
+      const token = jwt.sign(payload, processEnv.JWT_SECRET_KEY, {
+        expiresIn: '7d',
+        algorithm: 'HS512',
+      });
+
+      if (!pacAsUser.passwordIsReset) {
+        pacAsUser.lastAuth = new Date();
+        await ekPacienteRp.save(pacAsUser);
+      }
+
+      await qr.commitTransaction();
+      await ekQr.commitTransaction();
+
+      return { token, passwordIsReset: pacAsUser.passwordIsReset };
+    } catch (error: any) {
+      await qr.rollbackTransaction();
+      await ekQr.rollbackTransaction();
+      throw new Error(error.message);
+    } finally {
+      await qr.release();
+      await ekQr.release();
+    }
+  }
+}

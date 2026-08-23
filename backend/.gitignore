@@ -1,0 +1,15 @@
+# compiled output
+/.vscode
+/node_modules
+/.env
+/env.ts
+.agents
+skill.md
+skills-lock.json
+/rsa
+/ignored
+/private
+/public
+/dist
+/pacientes/dist
+.public
