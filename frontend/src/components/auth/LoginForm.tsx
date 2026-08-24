@@ -44,24 +44,23 @@ export function LoginForm() {
 
     setIsSubmitting(true)
 
-    await new Promise((resolve) => {
-      window.setTimeout(resolve, 900)
-    })
+    try {
+      const session = await authenticateUser({
+        document: document.trim(),
+        password,
+        keepSignedIn,
+      })
 
-    const session = authenticateUser({
-      document: document.trim(),
-      password,
-      keepSignedIn,
-    })
-
-    if (!session) {
-      setAuthError('Los datos ingresados no coinciden. Verifica tu acceso.')
+      saveAuthSession(session)
+      navigate(getDefaultRouteForRole(session.user.role), { replace: true })
+    } catch (error) {
+      setAuthError(
+        error instanceof Error
+          ? error.message
+          : 'Los datos ingresados no coinciden. Verifica tu acceso.',
+      )
       setIsSubmitting(false)
-      return
     }
-
-    saveAuthSession(session)
-    navigate(getDefaultRouteForRole(session.user.role), { replace: true })
   }
 
   return (

@@ -13,4 +13,6 @@ export type AuthUser = {
 export type AuthSession = {
   user: AuthUser
   keepSignedIn: boolean
+  token: string
+  passwordIsReset: boolean
 }
