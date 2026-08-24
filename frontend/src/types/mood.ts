@@ -1,10 +1,5 @@
 export type MoodValue =
-  | 'Tranquilo(a)'
-  | 'Alegre'
-  | 'Preocupado(a)'
-  | 'Triste'
-  | 'Cansado(a)'
-  | 'Desmotivado(a)'
+  'Tranquilo(a)' | 'Alegre' | 'Preocupado(a)' | 'Triste' | 'Cansado(a)' | 'Desmotivado(a)';
 
 export type InfluenceValue =
   | 'Dolor fisico'
@@ -12,14 +7,14 @@ export type InfluenceValue =
   | 'Preocupacion por resultados'
   | 'Familia o red de apoyo'
   | 'Efectos del tratamiento'
-  | 'Otro'
+  | 'Otro';
 
 export type MoodRecord = {
-  id: string
-  patientId: string
-  mood: MoodValue
-  influence: InfluenceValue
-  otherInfluence: string
-  comment: string
-  createdAt: string
-}
+  id: string;
+  patientId: string;
+  mood: MoodValue;
+  influence: InfluenceValue;
+  otherInfluence: string;
+  comment: string;
+  createdAt: string;
+};

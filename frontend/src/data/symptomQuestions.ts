@@ -1,4 +1,4 @@
-import type { SymptomQuestion } from '@/types/symptoms'
+import type { SymptomQuestion } from '@/types/symptoms';
 
 export const symptomQuestions: Record<string, SymptomQuestion[]> = {
   cough: [
@@ -174,4 +174,4 @@ export const symptomQuestions: Record<string, SymptomQuestion[]> = {
       ],
     },
   ],
-}
+};

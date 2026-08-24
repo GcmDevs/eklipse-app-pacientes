@@ -1,4 +1,4 @@
-import type { Announcement } from '@/types/announcement'
+import type { Announcement } from '@/types/announcement';
 
 export const announcements: Announcement[] = [
   {
@@ -13,8 +13,7 @@ export const announcements: Announcement[] = [
     id: 'announcement-2',
     category: 'Preparacion',
     title: 'Recomendacion para tu proxima visita',
-    description:
-      'Recuerda llevar tus documentos y resultados recientes para agilizar tu atencion.',
+    description: 'Recuerda llevar tus documentos y resultados recientes para agilizar tu atencion.',
     publishedAt: 'Publicado el 29 de julio de 2026',
   },
   {
@@ -25,4 +24,4 @@ export const announcements: Announcement[] = [
       'Consulta los canales disponibles para comunicarte con la institucion cuando lo necesites.',
     publishedAt: 'Publicado el 28 de julio de 2026',
   },
-]
+];

@@ -1,11 +1,11 @@
-import type { AuthUser } from '@/types/auth'
-import { findMockPatientByDocument } from './mockPatient'
+import type { AuthUser } from '@/types/auth';
+import { findMockPatientByDocument } from './mockPatient';
 
 type MockAuthAccount = {
-  document: string
-  password: string
-  user: AuthUser
-}
+  document: string;
+  password: string;
+  user: AuthUser;
+};
 
 export const mockAuthAccounts: MockAuthAccount[] = [
   createMockPatientAccount('123456789', '123456789', 'female'),
@@ -23,26 +23,25 @@ export const mockAuthAccounts: MockAuthAccount[] = [
       avatarVariant: 'female',
     },
   },
-]
+];
 
 export function findMockAccountByCredentials(document: string, password: string) {
   return (
     mockAuthAccounts.find(
-      (account) =>
-        account.document === document && account.password === password,
+      account => account.document === document && account.password === password
     ) ?? null
-  )
+  );
 }
 
 function createMockPatientAccount(
   document: string,
   password: string,
-  avatarVariant: 'male' | 'female',
+  avatarVariant: 'male' | 'female'
 ): MockAuthAccount {
-  const patient = findMockPatientByDocument(document)
+  const patient = findMockPatientByDocument(document);
 
   if (!patient) {
-    throw new Error(`No patient found for document ${document}`)
+    throw new Error(`No patient found for document ${document}`);
   }
 
   return {
@@ -57,5 +56,5 @@ function createMockPatientAccount(
       initials: patient.initials,
       avatarVariant,
     },
-  }
+  };
 }

@@ -1,4 +1,4 @@
-import type { SeverityOption } from '@/types/symptoms'
+import type { SeverityOption } from '@/types/symptoms';
 
 export const severityOptions: Record<string, SeverityOption[]> = {
   cough: [
@@ -133,4 +133,4 @@ export const severityOptions: Record<string, SeverityOption[]> = {
       severityLevel: 3,
     },
   ],
-}
+};

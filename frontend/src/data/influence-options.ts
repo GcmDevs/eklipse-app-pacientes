@@ -1,4 +1,4 @@
-import type { InfluenceValue } from '@/types/mood'
+import type { InfluenceValue } from '@/types/mood';
 
 export const influenceOptions: InfluenceValue[] = [
   'Dolor fisico',
@@ -7,4 +7,4 @@ export const influenceOptions: InfluenceValue[] = [
   'Familia o red de apoyo',
   'Efectos del tratamiento',
   'Otro',
-]
+];

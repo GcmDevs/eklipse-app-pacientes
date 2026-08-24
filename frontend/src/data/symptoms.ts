@@ -1,4 +1,4 @@
-import type { SymptomDefinition } from '@/types/symptoms'
+import type { SymptomDefinition } from '@/types/symptoms';
 
 export const symptoms: SymptomDefinition[] = [
   {
@@ -254,4 +254,4 @@ export const symptoms: SymptomDefinition[] = [
     questionIds: ['fever'],
     successMessage: 'Gracias por registrar tu sintoma. Ya quedo guardado.',
   },
-]
+];

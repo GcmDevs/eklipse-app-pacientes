@@ -1,4 +1,4 @@
-import type { SpecialtyDefinition, SpecialtyId } from '@/types/specialty'
+import type { SpecialtyDefinition, SpecialtyId } from '@/types/specialty';
 
 export const specialties: SpecialtyDefinition[] = [
   {
@@ -21,8 +21,8 @@ export const specialties: SpecialtyDefinition[] = [
     label: 'Bienestar integral',
     description: 'Pacientes con foco en apoyo emocional y autocuidado.',
   },
-]
+];
 
 export function getSpecialtyLabel(specialtyId: SpecialtyId) {
-  return specialties.find((specialty) => specialty.id === specialtyId)?.label ?? specialtyId
+  return specialties.find(specialty => specialty.id === specialtyId)?.label ?? specialtyId;
 }

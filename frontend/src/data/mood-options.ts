@@ -1,18 +1,12 @@
-import type { MoodValue } from '@/types/mood'
+import type { MoodValue } from '@/types/mood';
 
-export type MoodFaceId =
-  | 'calm'
-  | 'happy'
-  | 'worried'
-  | 'sad'
-  | 'tired'
-  | 'unmotivated'
+export type MoodFaceId = 'calm' | 'happy' | 'worried' | 'sad' | 'tired' | 'unmotivated';
 
 export type MoodOption = {
-  value: MoodValue
-  face: MoodFaceId
-  helper: string
-}
+  value: MoodValue;
+  face: MoodFaceId;
+  helper: string;
+};
 
 export const moodOptions: MoodOption[] = [
   {
@@ -45,4 +39,4 @@ export const moodOptions: MoodOption[] = [
     face: 'unmotivated',
     helper: 'Hoy cuesta un poco mas encontrar impulso.',
   },
-]
+];

@@ -2,17 +2,16 @@ import {
   defaultMockPatient,
   findMockPatientByDocument,
   findMockPatientById,
-} from "@/data/mockPatient";
-import type { AuthSession, AuthUser, UserRole } from "@/types/auth";
-import type { Patient } from "@/types/patient";
+} from '@/data/mockPatient';
+import type { AuthSession, AuthUser, UserRole } from '@/types/auth';
+import type { Patient } from '@/types/patient';
 
-const AUTH_STORAGE_KEY = "eklipse-auth-session";
+const AUTH_STORAGE_KEY = 'eklipse-auth-session';
 const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL?.replace(/\/$/, "") ??
-  "http://localhost:8005";
-const AUTH_CONTEXT = import.meta.env.VITE_AUTH_CONTEXT ?? "ALTACENTRO";
+  import.meta.env.VITE_API_BASE_URL?.replace(/\/$/, '') ?? 'http://localhost:8005';
+const AUTH_CONTEXT = import.meta.env.VITE_AUTH_CONTEXT ?? 'ALTACENTRO';
 
-export type AppPacienteRol = "USUARIO" | "PACIENTE";
+export type AppPacienteRol = 'USUARIO' | 'PACIENTE';
 
 type LoginPayload = {
   document: string;
@@ -38,9 +37,9 @@ export async function authenticateUser({
   keepSignedIn,
 }: LoginPayload): Promise<AuthSession> {
   const response = await fetch(`${API_BASE_URL}/v1/sec/auth/login`, {
-    method: "POST",
+    method: 'POST',
     headers: {
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
     body: JSON.stringify({
       context: AUTH_CONTEXT,
@@ -97,15 +96,15 @@ export function getCurrentUserRole(): UserRole | null {
 }
 
 export function isAdminSession() {
-  return getCurrentUserRole() === "admin";
+  return getCurrentUserRole() === 'admin';
 }
 
 export function isPatientSession() {
-  return getCurrentUserRole() === "patient";
+  return getCurrentUserRole() === 'patient';
 }
 
 export function getDefaultRouteForRole(role: UserRole | null) {
-  return role === "admin" ? "/admin/inicio" : "/inicio";
+  return role === 'admin' ? '/admin/inicio' : '/inicio';
 }
 
 export function getCurrentPatient(): Patient {
@@ -126,7 +125,7 @@ async function getLoginErrorMessage(response: Response) {
     const message = errorBody.message;
 
     if (Array.isArray(message)) {
-      return message.join(" ");
+      return message.join(' ');
     }
 
     if (message) {
@@ -136,11 +135,11 @@ async function getLoginErrorMessage(response: Response) {
     // The API can return an empty or non-JSON error body.
   }
 
-  return "Los datos ingresados no coinciden. Verifica tu acceso.";
+  return 'Los datos ingresados no coinciden. Verifica tu acceso.';
 }
 
 function decodeTokenPayload(token: string): TokenPayload {
-  const [, payload] = token.split(".");
+  const [, payload] = token.split('.');
 
   if (!payload) {
     return {};
@@ -148,13 +147,11 @@ function decodeTokenPayload(token: string): TokenPayload {
 
   try {
     const normalizedPayload = payload
-      .replace(/-/g, "+")
-      .replace(/_/g, "/")
-      .padEnd(Math.ceil(payload.length / 4) * 4, "=");
+      .replace(/-/g, '+')
+      .replace(/_/g, '/')
+      .padEnd(Math.ceil(payload.length / 4) * 4, '=');
     const decodedPayload = window.atob(normalizedPayload);
-    const bytes = Uint8Array.from(decodedPayload, (character) =>
-      character.charCodeAt(0),
-    );
+    const bytes = Uint8Array.from(decodedPayload, character => character.charCodeAt(0));
 
     return JSON.parse(new TextDecoder().decode(bytes)) as TokenPayload;
   } catch {
@@ -162,23 +159,20 @@ function decodeTokenPayload(token: string): TokenPayload {
   }
 }
 
-function createAuthUser(
-  document: string,
-  tokenPayload: TokenPayload,
-): AuthUser {
+function createAuthUser(document: string, tokenPayload: TokenPayload): AuthUser {
   const patientDocument = tokenPayload.dcm ?? document;
   const patient = findMockPatientByDocument(patientDocument);
   const fullName = tokenPayload.fnm ?? patient?.shortName ?? patientDocument;
-  const isAdmin = tokenPayload.rol === "USUARIO";
+  const isAdmin = tokenPayload.rol === 'USUARIO';
 
   return {
     id: tokenPayload.jti ?? patient?.id ?? patientDocument,
-    role: isAdmin ? "admin" : "patient",
+    role: isAdmin ? 'admin' : 'patient',
     patientId: isAdmin ? null : (patient?.id ?? null),
     document: patientDocument,
     name: fullName,
     initials: getInitials(fullName),
-    avatarVariant: patient?.sex === "Masculino" ? "male" : "female",
+    avatarVariant: patient?.sex === 'Masculino' ? 'male' : 'female',
   };
 }
 
@@ -187,9 +181,9 @@ function getInitials(name: string) {
     .trim()
     .split(/\s+/)
     .slice(0, 2)
-    .map((part) => part[0])
-    .join("")
+    .map(part => part[0])
+    .join('')
     .toUpperCase();
 
-  return initials || "EP";
+  return initials || 'EP';
 }

@@ -1,4 +1,4 @@
-import type { Invitation } from '@/types/invitation'
+import type { Invitation } from '@/types/invitation';
 
 export const invitationSeed: Invitation[] = [
   {
@@ -79,8 +79,7 @@ export const invitationSeed: Invitation[] = [
   {
     id: 'invitation-6',
     title: 'Jornada de educacion en autocuidado',
-    description:
-      'Sesion preparada para reforzar habitos utiles y resolver dudas de seguimiento.',
+    description: 'Sesion preparada para reforzar habitos utiles y resolver dudas de seguimiento.',
     scheduledDate: '2026-08-18',
     startTime: '09:30',
     endTime: '10:30',
@@ -91,4 +90,4 @@ export const invitationSeed: Invitation[] = [
     targetSpecialtyIds: ['cardiologia', 'bienestar'],
     status: 'draft',
   },
-]
+];

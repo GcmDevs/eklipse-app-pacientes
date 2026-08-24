@@ -1,4 +1,4 @@
-import type { LucideIcon } from 'lucide-react'
+import type { LucideIcon } from 'lucide-react';
 import {
   Activity,
   CalendarDays,
@@ -10,16 +10,16 @@ import {
   Smile,
   UserRound,
   Users,
-} from 'lucide-react'
-import type { UserRole } from '@/types/auth'
+} from 'lucide-react';
+import type { UserRole } from '@/types/auth';
 
 export type NavigationItem = {
-  to: string
-  label: string
-  shortLabel: string
-  title: string
-  icon: LucideIcon
-}
+  to: string;
+  label: string;
+  shortLabel: string;
+  title: string;
+  icon: LucideIcon;
+};
 
 export const patientNavigationItems: NavigationItem[] = [
   {
@@ -71,7 +71,7 @@ export const patientNavigationItems: NavigationItem[] = [
     title: 'Mi perfil',
     icon: UserRound,
   },
-]
+];
 
 export const adminNavigationItems: NavigationItem[] = [
   {
@@ -102,31 +102,35 @@ export const adminNavigationItems: NavigationItem[] = [
     title: 'Perfil administrador',
     icon: UserRound,
   },
-]
+];
 
 export function getNavigationItemsByRole(role: UserRole) {
-  return role === 'admin' ? adminNavigationItems : patientNavigationItems
+  return role === 'admin' ? adminNavigationItems : patientNavigationItems;
 }
 
 export function getPageTitle(pathname: string, role: UserRole) {
-  const navigationItems = getNavigationItemsByRole(role)
-  const exactMatch = navigationItems.find((entry) => entry.to === pathname)
+  const navigationItems = getNavigationItemsByRole(role);
+  const exactMatch = navigationItems.find(entry => entry.to === pathname);
 
   if (exactMatch) {
-    return exactMatch.title
+    return exactMatch.title;
   }
 
   if (role === 'admin' && pathname.startsWith('/admin/pacientes/')) {
-    return 'Detalle del paciente'
+    return 'Detalle del paciente';
   }
 
   if (role === 'admin' && pathname === '/admin/invitaciones/nueva') {
-    return 'Nueva invitacion'
+    return 'Nueva invitacion';
   }
 
-  if (role === 'admin' && pathname.includes('/admin/invitaciones/') && pathname.endsWith('/editar')) {
-    return 'Editar invitacion'
+  if (
+    role === 'admin' &&
+    pathname.includes('/admin/invitaciones/') &&
+    pathname.endsWith('/editar')
+  ) {
+    return 'Editar invitacion';
   }
 
-  return 'Ruta no encontrada'
+  return 'Ruta no encontrada';
 }

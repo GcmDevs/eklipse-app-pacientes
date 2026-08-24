@@ -1,4 +1,4 @@
-import type { BodyRegion, QuickAccess } from '@/types/symptoms'
+import type { BodyRegion, QuickAccess } from '@/types/symptoms';
 
 export const bodyRegions: BodyRegion[] = [
   {
@@ -31,7 +31,7 @@ export const bodyRegions: BodyRegion[] = [
     description: 'Comezon, sarpullido, heridas o cambios visibles en la piel.',
     bodyArea: 'arms',
   },
-]
+];
 
 export const quickAccesses: QuickAccess[] = [
   {
@@ -58,4 +58,4 @@ export const quickAccesses: QuickAccess[] = [
     description: 'Quiero registrar fiebre o sensacion de temperatura elevada.',
     icon: 'spark',
   },
-]
+];

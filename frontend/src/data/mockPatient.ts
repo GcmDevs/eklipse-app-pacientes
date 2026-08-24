@@ -1,4 +1,4 @@
-import type { Patient } from '@/types/patient'
+import type { Patient } from '@/types/patient';
 
 export const mockPatients: Patient[] = [
   {
@@ -109,17 +109,14 @@ export const mockPatients: Patient[] = [
     municipality: 'Bucaramanga',
     department: 'Santander',
   },
-]
+];
 
-export const defaultMockPatient = mockPatients[0]
+export const defaultMockPatient = mockPatients[0];
 
 export function findMockPatientById(patientId: string) {
-  return mockPatients.find((patient) => patient.id === patientId) ?? null
+  return mockPatients.find(patient => patient.id === patientId) ?? null;
 }
 
 export function findMockPatientByDocument(documentNumber: string) {
-  return (
-    mockPatients.find((patient) => patient.documentNumber === documentNumber) ??
-    null
-  )
+  return mockPatients.find(patient => patient.documentNumber === documentNumber) ?? null;
 }

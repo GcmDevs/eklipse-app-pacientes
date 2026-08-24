@@ -1,11 +1,10 @@
-import { getAuthSession } from "@/lib/auth";
-import type { MoodRecord } from "@/types/mood";
-import type { InfluenceValue, MoodValue } from "@/types/mood";
+import { getAuthSession } from '@/lib/auth';
+import type { MoodRecord } from '@/types/mood';
+import type { InfluenceValue, MoodValue } from '@/types/mood';
 
-export const MOOD_RECORDS_STORAGE_KEY = "eklipse_mood_records";
+export const MOOD_RECORDS_STORAGE_KEY = 'eklipse_mood_records';
 const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL?.replace(/\/$/, "") ??
-  "http://localhost:8005";
+  import.meta.env.VITE_API_BASE_URL?.replace(/\/$/, '') ?? 'http://localhost:8005';
 
 type BackendMoodRecord = {
   id: number;
@@ -45,7 +44,7 @@ export async function fetchTodayMoodRecord(patientId: string) {
   const session = getAuthSession();
 
   if (!session?.token) {
-    throw new Error("No hay una sesion activa para consultar el registro.");
+    throw new Error('No hay una sesion activa para consultar el registro.');
   }
 
   const response = await fetch(`${API_BASE_URL}/v1/gen/estado-animo/today`, {
@@ -73,14 +72,14 @@ export async function registerMoodRecord({
   const session = getAuthSession();
 
   if (!session?.token) {
-    throw new Error("No hay una sesion activa para guardar el registro.");
+    throw new Error('No hay una sesion activa para guardar el registro.');
   }
 
   const response = await fetch(`${API_BASE_URL}/v1/gen/estado-animo`, {
-    method: "POST",
+    method: 'POST',
     headers: {
       Authorization: `Bearer ${session.token}`,
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
     body: JSON.stringify({
       estadoAnimoCode: moodToCode(mood),
@@ -100,54 +99,54 @@ export async function registerMoodRecord({
 }
 
 function moodToCode(mood: MoodValue) {
-  if (mood === "Tranquilo(a)") return 1;
-  if (mood === "Alegre") return 2;
-  if (mood === "Preocupado(a)") return 3;
-  if (mood === "Triste") return 4;
-  if (mood === "Cansado(a)") return 5;
+  if (mood === 'Tranquilo(a)') return 1;
+  if (mood === 'Alegre') return 2;
+  if (mood === 'Preocupado(a)') return 3;
+  if (mood === 'Triste') return 4;
+  if (mood === 'Cansado(a)') return 5;
   return 6;
 }
 
 function influenceToCode(influence: InfluenceValue) {
-  if (influence === "Dolor fisico") return 1;
-  if (influence === "Cansancio") return 2;
-  if (influence === "Preocupacion por resultados") return 3;
-  if (influence === "Familia o red de apoyo") return 4;
-  if (influence === "Efectos del tratamiento") return 5;
+  if (influence === 'Dolor fisico') return 1;
+  if (influence === 'Cansancio') return 2;
+  if (influence === 'Preocupacion por resultados') return 3;
+  if (influence === 'Familia o red de apoyo') return 4;
+  if (influence === 'Efectos del tratamiento') return 5;
   return 6;
 }
 
 function codeToMood(code: number): MoodValue {
-  if (code === 1) return "Tranquilo(a)";
-  if (code === 2) return "Alegre";
-  if (code === 3) return "Preocupado(a)";
-  if (code === 4) return "Triste";
-  if (code === 5) return "Cansado(a)";
-  return "Desmotivado(a)";
+  if (code === 1) return 'Tranquilo(a)';
+  if (code === 2) return 'Alegre';
+  if (code === 3) return 'Preocupado(a)';
+  if (code === 4) return 'Triste';
+  if (code === 5) return 'Cansado(a)';
+  return 'Desmotivado(a)';
 }
 
 function codeToInfluence(code: number): InfluenceValue {
-  if (code === 1) return "Dolor fisico";
-  if (code === 2) return "Cansancio";
-  if (code === 3) return "Preocupacion por resultados";
-  if (code === 4) return "Familia o red de apoyo";
-  if (code === 5) return "Efectos del tratamiento";
-  return "Otro";
+  if (code === 1) return 'Dolor fisico';
+  if (code === 2) return 'Cansancio';
+  if (code === 3) return 'Preocupacion por resultados';
+  if (code === 4) return 'Familia o red de apoyo';
+  if (code === 5) return 'Efectos del tratamiento';
+  return 'Otro';
 }
 
 function backendRecordToMoodRecord(
   record: BackendMoodRecord,
   patientId: string,
   mood = codeToMood(record.estadoAnimoCode),
-  influence = codeToInfluence(record.factorEstadoAnimoCode),
+  influence = codeToInfluence(record.factorEstadoAnimoCode)
 ) {
   return {
     id: String(record.id),
     patientId,
     mood,
     influence,
-    otherInfluence: record.descripcionFactorEstadoAnimo ?? "",
-    comment: record.comentarioAdicional ?? "",
+    otherInfluence: record.descripcionFactorEstadoAnimo ?? '',
+    comment: record.comentarioAdicional ?? '',
     createdAt: record.createdAt,
   } satisfies MoodRecord;
 }
@@ -160,7 +159,7 @@ async function getApiErrorMessage(response: Response) {
     const message = errorBody.message;
 
     if (Array.isArray(message)) {
-      return message.join(" ");
+      return message.join(' ');
     }
 
     if (message) {
@@ -170,5 +169,5 @@ async function getApiErrorMessage(response: Response) {
     // The API can return an empty or non-JSON error body.
   }
 
-  return "No pudimos guardar el registro. Intentalo nuevamente.";
+  return 'No pudimos guardar el registro. Intentalo nuevamente.';
 }
