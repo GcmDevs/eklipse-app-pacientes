@@ -1,10 +1,11 @@
+import { Circle, CircleDot } from 'lucide-react'
 import type { SeverityOption } from '@/types/symptoms'
 
 type SeveritySelectorProps = {
   symptomName: string
   options: SeverityOption[]
-  selectedId: string | null
-  onSelect: (optionId: string) => void
+  selectedId: number | null
+  onSelect: (optionId: number) => void
   onBack: () => void
 }
 
@@ -42,12 +43,18 @@ export function SeveritySelector({
               onClick={() => onSelect(option.id)}
             >
               <span className="severity-mark" aria-hidden="true">
-                {selected ? '●' : '○'}
+                {selected ? <CircleDot size={20} /> : <Circle size={20} />}
               </span>
               <span>{option.label}</span>
             </button>
           )
         })}
+        {options.length === 0 ? (
+          <div className="empty-search-state" role="status">
+            <strong>No hay intensidades configuradas para este sintoma.</strong>
+            <p>Vuelve a la lista y selecciona otro sintoma.</p>
+          </div>
+        ) : null}
       </div>
     </section>
   )

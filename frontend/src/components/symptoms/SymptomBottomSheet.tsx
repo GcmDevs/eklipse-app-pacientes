@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
+import { Activity } from 'lucide-react'
 import type { SymptomDefinition } from '@/types/symptoms'
 
 type SymptomBottomSheetProps = {
@@ -109,20 +110,19 @@ export function SymptomBottomSheet({
               onClick={() => onSelectSymptom(symptom)}
             >
               <span className="sheet-symptom-icon" aria-hidden="true">
-                {getSymptomIcon(symptom.icon)}
+                <Activity size={20} />
               </span>
               <strong>{symptom.name}</strong>
             </button>
           ))}
+          {symptoms.length === 0 ? (
+            <div className="empty-search-state" role="status">
+              <strong>No hay sintomas configurados para esta area.</strong>
+              <p>Selecciona otra region corporal o intenta mas tarde.</p>
+            </div>
+          ) : null}
         </div>
       </section>
     </div>
   )
-}
-
-function getSymptomIcon(kind: string) {
-  if (kind === 'burst') return '✦'
-  if (kind === 'swirl') return '◌'
-  if (kind === 'wave') return '≈'
-  return '•'
 }

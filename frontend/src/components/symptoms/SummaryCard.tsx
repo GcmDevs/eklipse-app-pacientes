@@ -1,7 +1,8 @@
+import { CheckCircle2 } from 'lucide-react'
+
 type SummaryCardProps = {
   symptomName: string
   severityLabel: string
-  answerSummaries: string[]
   onBack: () => void
   onConfirm: () => void
 }
@@ -9,7 +10,6 @@ type SummaryCardProps = {
 export function SummaryCard({
   symptomName,
   severityLabel,
-  answerSummaries,
   onBack,
   onConfirm,
 }: SummaryCardProps) {
@@ -24,10 +24,10 @@ export function SummaryCard({
       </div>
 
       <div className="summary-check-list">
-        <div>✓ {severityLabel}</div>
-        {answerSummaries.map((summary) => (
-          <div key={summary}>✓ {summary}</div>
-        ))}
+        <div>
+          <CheckCircle2 size={18} aria-hidden="true" />
+          <span>{severityLabel}</span>
+        </div>
       </div>
 
       <div className="feedback-actions">

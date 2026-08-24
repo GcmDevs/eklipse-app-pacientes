@@ -4,11 +4,11 @@ export type RegionCorporalSintomaCode = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
 
 export class RegionCorporalSintomaType extends CtmType<RegionCorporalSintomaCode> {}
 
-const SALUD_ORAL = new RegionCorporalSintomaType(1, 'SALUD ORAL');
-const RESPIRACION = new RegionCorporalSintomaType(2, 'RESPIRACION');
-const DIGESTIVO = new RegionCorporalSintomaType(3, 'DIGESTIVO');
-const PROBLEMAS_URINARIOS = new RegionCorporalSintomaType(4, 'PROBLEMAS URINARIOS');
-const PIEL = new RegionCorporalSintomaType(5, 'PIEL');
+const SALUD_ORAL = new RegionCorporalSintomaType(1, 'Salud oral');
+const RESPIRACION = new RegionCorporalSintomaType(2, 'Respiración');
+const DIGESTIVO = new RegionCorporalSintomaType(3, 'Digestivo');
+const PROBLEMAS_URINARIOS = new RegionCorporalSintomaType(4, 'Problemas urinarios');
+const PIEL = new RegionCorporalSintomaType(5, 'Piel');
 
 export function regionCorporalSintomaTypeFactory(
   code: RegionCorporalSintomaCode

@@ -1772,6 +1772,18 @@ svg {
   transform: translate(-50%, -50%) scale(1.02);
 }
 
+.body-map-card-disabled {
+  opacity: 0.68;
+}
+
+.body-map__marker:disabled {
+  cursor: not-allowed;
+}
+
+.body-map__marker:disabled:hover {
+  transform: translate(-50%, -50%);
+}
+
 .body-map__marker-muted {
   opacity: 0.38;
 }
@@ -2035,6 +2047,55 @@ svg {
   color: var(--color-primary);
 }
 
+.search-launch-card:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+  transform: none;
+}
+
+.symptom-catalog-status {
+  min-height: 72px;
+  padding: 14px 16px;
+  border-radius: 16px;
+  border: 1px solid var(--color-border);
+  background: rgba(237, 246, 247, 0.78);
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  color: var(--color-text-muted);
+}
+
+.symptom-catalog-status strong {
+  display: block;
+  margin-bottom: 4px;
+  color: var(--color-primary-strong);
+}
+
+.symptom-catalog-status p {
+  margin: 0;
+}
+
+.symptom-catalog-status-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  background: var(--color-secondary-soft);
+  color: var(--color-primary);
+}
+
+.symptom-catalog-status-icon.is-loading svg {
+  animation: catalogSpinner 0.9s linear infinite;
+}
+
+@keyframes catalogSpinner {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 .bottom-sheet-layer {
   position: fixed;
   inset: 0;
@@ -2136,6 +2197,10 @@ svg {
   gap: 14px;
 }
 
+.sheet-symptom-grid > .empty-search-state {
+  grid-column: 1 / -1;
+}
+
 .search-field {
   min-height: 56px;
   padding: 0 16px;
@@ -2222,6 +2287,15 @@ svg {
   background: rgba(237, 246, 247, 0.86);
   color: var(--color-primary-strong);
   font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .symptom-catalog-status-icon.is-loading svg {
+    animation: none;
+  }
 }
 
 .symptom-success-card {
@@ -4297,6 +4371,15 @@ svg {
     width: 100%;
     min-height: 100vh;
     padding: 10px 8px 14px;
+  }
+
+  .symptom-catalog-status {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .symptom-catalog-status .secondary-button {
+    grid-column: 1 / -1;
+    width: 100%;
   }
 
   .auth-panel,

@@ -7,6 +7,7 @@ type BodyMapProps = {
   avatarVariant: 'male' | 'female'
   selectedRegionId: BodyRegionId | null
   onSelectRegion: (regionId: BodyRegionId) => void
+  disabled?: boolean
 }
 
 type MarkerConfig = {
@@ -65,12 +66,13 @@ export function BodyMap({
   avatarVariant,
   selectedRegionId,
   onSelectRegion,
+  disabled = false,
 }: BodyMapProps) {
   const hasSelection = selectedRegionId !== null
   const bodyMapAsset = avatarVariant === 'male' ? bodyMapMan : bodyMapWoman
 
   return (
-    <div className="body-map-card">
+    <div className={disabled ? 'body-map-card body-map-card-disabled' : 'body-map-card'}>
       <div className="body-map__canvas">
         <div className="body-map__figure">
           <div className="body-map__image-frame">
@@ -105,6 +107,7 @@ export function BodyMap({
                 }
                 aria-label={marker.label}
                 aria-pressed={isSelected}
+                disabled={disabled}
                 onClick={() => onSelectRegion(marker.regionId)}
               >
                 <span className="body-map__pin" aria-hidden="true" />

@@ -1,9 +1,12 @@
 import { Module } from '@nestjs/common';
-import { EstadoAnimoController } from './presentation/controllers';
-import { RegistrarEstadoAnimoImpl } from './infrastructure/services';
+import { EstadoAnimoController, SintomasController } from './presentation/controllers';
+import {
+  ConsultarCatalogoSintomasImpl,
+  RegistrarEstadoAnimoImpl,
+} from './infrastructure/services';
 
 @Module({
-  controllers: [EstadoAnimoController],
-  providers: [RegistrarEstadoAnimoImpl],
+  controllers: [EstadoAnimoController, SintomasController],
+  providers: [ConsultarCatalogoSintomasImpl, RegistrarEstadoAnimoImpl],
 })
 export class GeneralModule {}

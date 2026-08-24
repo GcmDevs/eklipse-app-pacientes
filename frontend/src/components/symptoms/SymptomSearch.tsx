@@ -46,7 +46,7 @@ export function SymptomSearch({
             onClick={() => onSelectSymptom(symptom)}
           >
             <strong>{symptom.name}</strong>
-            <span>Relacionado con {symptom.regionId}</span>
+            <span>Relacionado con {symptom.regionName}</span>
           </button>
         ))}
         {results.length === 0 ? (
