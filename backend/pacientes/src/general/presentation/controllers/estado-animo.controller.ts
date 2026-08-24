@@ -10,6 +10,11 @@ import { RegistrarEstadoAnimoDto } from '../dtos';
 export class EstadoAnimoController {
   constructor(private _registrarEstadoAnimo: RegistrarEstadoAnimoImpl) {}
 
+  @Get('history')
+  public async fetchHistory() {
+    return await this._registrarEstadoAnimo.fetchHistory();
+  }
+
   @Get('today')
   public async fetchToday() {
     return await this._registrarEstadoAnimo.fetchToday();

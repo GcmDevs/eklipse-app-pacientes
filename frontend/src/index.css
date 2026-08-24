@@ -4666,6 +4666,67 @@ svg {
   display: none;
 }
 
+.history-page {
+  gap: 18px;
+}
+
+.history-hero {
+  align-items: center;
+}
+
+.history-list {
+  display: grid;
+  gap: 12px;
+}
+
+.history-record {
+  display: grid;
+  gap: 12px;
+  padding: 16px;
+  border: 1px solid rgba(19, 62, 88, 0.14);
+  border-radius: 8px;
+  background: #ffffff;
+  box-shadow: 0 14px 32px rgba(19, 62, 88, 0.08);
+}
+
+.history-record-date,
+.history-record-comment {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #526a7a;
+  font-size: 0.88rem;
+}
+
+.history-record-date svg,
+.history-record-comment svg {
+  flex: 0 0 auto;
+  color: #12869b;
+}
+
+.history-record-main {
+  display: grid;
+  gap: 5px;
+}
+
+.history-record-main strong {
+  color: #07324a;
+  font-size: 1.08rem;
+}
+
+.history-record-main span {
+  color: #315268;
+  font-size: 0.94rem;
+}
+
+.history-record-comment {
+  align-items: flex-start;
+  margin: 0;
+  padding-top: 12px;
+  border-top: 1px solid rgba(19, 62, 88, 0.1);
+  line-height: 1.5;
+}
+
 @media (max-width: 1024px) {
   .mobile-only {
     display: inline-grid;

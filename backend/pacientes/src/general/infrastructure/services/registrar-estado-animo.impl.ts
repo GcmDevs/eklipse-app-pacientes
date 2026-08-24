@@ -13,6 +13,19 @@ const MIN_HOURS_BETWEEN_REGISTERS = 6;
 
 @Injectable()
 export class RegistrarEstadoAnimoImpl extends BaseSource {
+  public async fetchHistory(): Promise<RegistroEstadoAnimoOrm[]> {
+    try {
+      const registroEstadoAnimoRp = this.conn.getRepository(RegistroEstadoAnimoOrm);
+
+      return await registroEstadoAnimoRp.find({
+        where: { pacienteId: this.auth.patientId },
+        order: { createdAt: 'DESC' },
+      });
+    } catch (error: any) {
+      throw new BadRequestException(error.message);
+    }
+  }
+
   public async fetchToday(): Promise<RegistroEstadoAnimoOrm | null> {
     try {
       const registroEstadoAnimoRp = this.conn.getRepository(RegistroEstadoAnimoOrm);

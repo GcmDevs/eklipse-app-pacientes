@@ -62,6 +62,28 @@ export async function fetchTodayMoodRecord(patientId: string) {
   return record ? backendRecordToMoodRecord(record, patientId) : null;
 }
 
+export async function fetchMoodHistory(patientId: string) {
+  const session = getAuthSession();
+
+  if (!session?.token) {
+    throw new Error('No hay una sesion activa para consultar el historial.');
+  }
+
+  const response = await fetch(`${API_BASE_URL}/v1/gen/estado-animo/history`, {
+    headers: {
+      Authorization: `Bearer ${session.token}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error(await getApiErrorMessage(response));
+  }
+
+  const records = (await response.json()) as BackendMoodRecord[];
+
+  return records.map(record => backendRecordToMoodRecord(record, patientId));
+}
+
 export async function registerMoodRecord({
   patientId,
   mood,

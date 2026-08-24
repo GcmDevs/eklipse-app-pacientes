@@ -1,4 +1,4 @@
-import { CircleHelp, History } from 'lucide-react'
+import { CircleHelp } from 'lucide-react'
 import { createBrowserRouter, Navigate } from 'react-router-dom'
 import { AdminLayout } from '@/components/layout/AdminLayout'
 import { MainLayout } from '@/components/layout/MainLayout'
@@ -10,6 +10,7 @@ import { AdminPatientsPage } from '@/pages/admin/AdminPatientsPage'
 import { AdminProfilePage } from '@/pages/admin/AdminProfilePage'
 import { LoginPage } from '@/pages/auth/LoginPage'
 import { ComingSoonPage } from '@/pages/home/ComingSoonPage'
+import { HistoryPage } from '@/pages/history/HistoryPage'
 import { HomePage } from '@/pages/home/HomePage'
 import { InvitationDetailPage } from '@/pages/invitations/InvitationDetailPage'
 import { InvitationsPage } from '@/pages/invitations/InvitationsPage'
@@ -63,13 +64,7 @@ export const appRouter = createBrowserRouter([
           },
           {
             path: '/historial',
-            element: (
-              <ComingSoonPage
-                icon={History}
-                title="Mi historial"
-                description="Aqui podras consultar los registros que hayas realizado."
-              />
-            ),
+            element: <HistoryPage />,
           },
           {
             path: '/preguntas-frecuentes',
