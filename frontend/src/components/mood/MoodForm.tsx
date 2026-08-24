@@ -7,8 +7,8 @@ import { moodMessages } from '@/data/mood-messages'
 import { moodOptions } from '@/data/mood-options'
 import { getAuthSession, getCurrentPatient } from '@/lib/auth'
 import {
-  getTodayMoodRecord,
-  saveMoodRecord,
+  fetchTodayMoodRecord,
+  registerMoodRecord,
 } from '@/lib/mood-records'
 import type { InfluenceValue, MoodRecord, MoodValue } from '@/types/mood'
 import { ExistingMoodRecord } from './ExistingMoodRecord'
@@ -23,6 +23,7 @@ type FormErrors = {
   influence?: string
   otherInfluence?: string
   comment?: string
+  submit?: string
 }
 
 const COMMENT_LIMIT = 500
@@ -36,13 +37,43 @@ export function MoodForm() {
   const [comment, setComment] = useState('')
   const [errors, setErrors] = useState<FormErrors>({})
   const [savedRecord, setSavedRecord] = useState<MoodRecord | null>(null)
-  const [existingRecord, setExistingRecord] = useState<MoodRecord | null>(() =>
-    getTodayMoodRecord(patient.id) ?? null,
-  )
+  const [existingRecord, setExistingRecord] = useState<MoodRecord | null>(null)
+  const [isLoadingExistingRecord, setIsLoadingExistingRecord] = useState(true)
   const [showCancelModal, setShowCancelModal] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const illustration =
     session?.user.avatarVariant === 'male' ? homePortraitMan : homePortraitWoman
+
+  useEffect(() => {
+    let isMounted = true
+
+    fetchTodayMoodRecord(patient.id)
+      .then((record) => {
+        if (isMounted) {
+          setExistingRecord(record)
+        }
+      })
+      .catch((error) => {
+        if (isMounted) {
+          setErrors((current) => ({
+            ...current,
+            submit:
+              error instanceof Error
+                ? error.message
+                : 'No pudimos consultar tu registro de hoy.',
+          }))
+        }
+      })
+      .finally(() => {
+        if (isMounted) {
+          setIsLoadingExistingRecord(false)
+        }
+      })
+
+    return () => {
+      isMounted = false
+    }
+  }, [patient.id])
 
   useEffect(() => {
     if (!showCancelModal) {
@@ -113,37 +144,46 @@ export function MoodForm() {
       return
     }
 
-    const currentRecord = getTodayMoodRecord(patient.id)
-
-    if (currentRecord) {
-      setExistingRecord(currentRecord)
-      return
-    }
-
     setIsSubmitting(true)
 
-    await new Promise((resolve) => {
-      window.setTimeout(resolve, 700)
-    })
+    try {
+      const record = await registerMoodRecord({
+        patientId: patient.id,
+        mood,
+        influence,
+        otherInfluence,
+        comment,
+      })
 
-    const record: MoodRecord = {
-      id: crypto.randomUUID(),
-      patientId: patient.id,
-      mood,
-      influence,
-      otherInfluence: otherInfluence.trim(),
-      comment: comment.trim(),
-      createdAt: new Date().toISOString(),
+      setSavedRecord(record)
+      resetFormState()
+    } catch (error) {
+      setErrors((current) => ({
+        ...current,
+        submit:
+          error instanceof Error
+            ? error.message
+            : 'No pudimos guardar el registro. Intentalo nuevamente.',
+      }))
+    } finally {
+      setIsSubmitting(false)
     }
-
-    saveMoodRecord(record)
-    setSavedRecord(record)
-    setIsSubmitting(false)
-    resetFormState()
   }
 
   if (existingRecord) {
     return <ExistingMoodRecord record={existingRecord} />
+  }
+
+  if (isLoadingExistingRecord) {
+    return (
+      <section className="mood-feedback-card">
+        <p className="eyebrow">Consultando</p>
+        <h2>Estamos revisando tu registro de hoy</h2>
+        <p className="mood-feedback-text">
+          Un momento mientras cargamos tu informacion.
+        </p>
+      </section>
+    )
   }
 
   if (savedRecord) {
@@ -329,6 +369,9 @@ export function MoodForm() {
         ) : null}
 
         <div className="form-actions">
+          {errors.submit ? (
+            <p className="field-error">{errors.submit}</p>
+          ) : null}
           <button
             type="submit"
             className="primary-button mood-action-button"

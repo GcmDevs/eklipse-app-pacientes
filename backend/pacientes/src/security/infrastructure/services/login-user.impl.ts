@@ -6,7 +6,7 @@ import {
   estadoUsuarioTypeFactory,
 } from '@gen/security/domain/types/gen/usuarios';
 import { cryptoServices as crypto, IAuthToken, RSAServices } from '@common/application/services';
-import { _PrivSecEkUserOrm } from '@common/infrastructure/orm/pacient-as-user.orm';
+import { _PrivSecPacAsUserOrm } from '@common/infrastructure/orm/pacient-as-user.orm';
 import { _PrivSecUserOrm } from '@common/infrastructure/orm/user.orm';
 import { gcmContextFactory } from '@common/domain/types';
 import { LoginUserDto } from '@gen/security/presentation/dtos';
@@ -38,7 +38,7 @@ export class LoginUserImpl {
       await ekQr.startTransaction();
 
       const pacienteRp = qr.manager.getRepository(_PrivSecPatientOrm);
-      const ekPacienteRp = ekQr.manager.getRepository(_PrivSecEkUserOrm);
+      const ekPacienteRp = ekQr.manager.getRepository(_PrivSecPacAsUserOrm);
 
       const paciente = await pacienteRp.findOne({ where: { document: username } });
       if (!paciente) throw new Error('El paciente no ha sido atendido en esta clinica');
@@ -47,6 +47,7 @@ export class LoginUserImpl {
         where: { document: username },
         select: {
           id: true,
+          pacientId: true,
           document: true,
           fullName: true,
           password: true,
@@ -73,6 +74,7 @@ export class LoginUserImpl {
 
       const payload: IAuthToken = {
         jti: RSAServices.encryptId(pacAsUser.id),
+        pid: RSAServices.encryptId(pacAsUser.pacientId),
         rst: pacAsUser.passwordIsReset,
         dcm: paciente.document,
         fnm: paciente.fullName,

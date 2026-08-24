@@ -25,10 +25,11 @@ export class BaseSource {
       const tkDecoded = this.getTokenDecoded();
 
       const id = tkDecoded.user.id;
+      const patientId = tkDecoded.user.patientId;
       const user = tkDecoded.user;
       const context = tkDecoded.context;
 
-      return { id, user, context };
+      return { id, patientId, user, context };
     } catch (error: any) {
       throw new UnauthorizedException(error.message);
     }

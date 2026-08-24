@@ -1,7 +1,7 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('APPACUSUARIO')
-export class _PrivSecEkUserOrm {
+export class _PrivSecPacAsUserOrm {
   @PrimaryGeneratedColumn({ name: 'OID' })
   id: number;
 

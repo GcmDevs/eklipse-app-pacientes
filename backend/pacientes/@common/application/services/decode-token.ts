@@ -5,6 +5,7 @@ import { RSAServices } from './rsa';
 export type AppPacienteRol = 'USUARIO' | 'PACIENTE';
 export interface IAuthToken {
   jti: string;
+  pid: string;
   sub: GcmContextCode;
   dcm: string;
   fnm: string;
@@ -19,6 +20,7 @@ export interface ITokenDecoded {
     id: number;
     document: string;
     fullName: string;
+    patientId: number;
   };
   passWasReset: boolean;
   role: AppPacienteRol;
@@ -37,7 +39,12 @@ const decodeToken = (token: string): ITokenDecoded => {
     const tkDcd: IAuthToken = jwtDecode(token);
 
     const tkFt: ITokenDecoded = {
-      user: { id: RSAServices.decryptId(tkDcd.jti), document: tkDcd.dcm, fullName: tkDcd.fnm },
+      user: {
+        id: RSAServices.decryptId(tkDcd.jti),
+        document: tkDcd.dcm,
+        fullName: tkDcd.fnm,
+        patientId: RSAServices.decryptId(tkDcd.pid),
+      },
       role: tkDcd.rol,
       passWasReset: tkDcd.rst,
       context: gcmContextFactory(tkDcd.sub),
