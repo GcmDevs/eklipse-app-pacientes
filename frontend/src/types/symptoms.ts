@@ -2,6 +2,8 @@ export type BodyRegionId = 'oral' | 'respiratory' | 'digestive' | 'urinary' | 's
 
 export type BodyRegionCode = 1 | 2 | 3 | 4 | 5;
 
+export type QuickAccessCode = 'DOLOR' | 'NAUSEAS' | 'FATIGA' | 'FIEBRE';
+
 export type SeverityOption = {
   id: number;
   label: string;
@@ -15,6 +17,7 @@ export type SymptomDefinition = {
   regionId: BodyRegionId;
   regionCode: BodyRegionCode;
   regionName: string;
+  quickAccessCodes: QuickAccessCode[];
   intensities: SeverityOption[];
 };
 
@@ -24,6 +27,11 @@ export type BodyRegion = {
   label: string;
   description: string;
   bodyArea: string;
+};
+
+export type QuickAccess = {
+  code: QuickAccessCode;
+  label: string;
 };
 
 export type SymptomAnswerMap = Record<string, string>;

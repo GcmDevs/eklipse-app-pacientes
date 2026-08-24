@@ -1,6 +1,6 @@
 import { findBodyRegionByCode } from '@/data/bodyRegions';
 import { getAuthSession } from '@/lib/auth';
-import type { SymptomDefinition } from '@/types/symptoms';
+import type { QuickAccessCode, SymptomDefinition } from '@/types/symptoms';
 
 const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL?.replace(/\/$/, '') ?? 'http://localhost:8005';
@@ -13,6 +13,7 @@ type BackendSymptomIntensity = {
 type BackendSymptom = {
   id: number;
   descripcion: string;
+  accesosRapidos: QuickAccessCode[];
   intensidad: BackendSymptomIntensity[];
 };
 
@@ -61,6 +62,9 @@ export async function fetchSymptomCatalog(signal?: AbortSignal): Promise<Symptom
       regionId: bodyRegion.id,
       regionCode: bodyRegion.code,
       regionName: region.regionCorporal.forHumans || bodyRegion.label,
+      quickAccessCodes: Array.isArray(symptom.accesosRapidos)
+        ? symptom.accesosRapidos.filter(isQuickAccessCode)
+        : [],
       intensities: (Array.isArray(symptom.intensidad) ? symptom.intensidad : []).map(
         (intensity, index) => ({
           id: intensity.id,
@@ -71,6 +75,10 @@ export async function fetchSymptomCatalog(signal?: AbortSignal): Promise<Symptom
       ),
     }));
   });
+}
+
+function isQuickAccessCode(value: string): value is QuickAccessCode {
+  return value === 'DOLOR' || value === 'NAUSEAS' || value === 'FATIGA' || value === 'FIEBRE';
 }
 
 async function getApiErrorMessage(response: Response) {

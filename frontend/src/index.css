@@ -2013,6 +2013,12 @@ svg {
   transform: translateY(-1px);
 }
 
+.quick-access-card:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+  transform: none;
+}
+
 .quick-access-label {
   color: var(--color-primary-strong);
   font-weight: 700;

@@ -7,12 +7,14 @@ import {
 } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { BodyMap } from '@/components/symptoms/BodyMap'
+import { QuickAccessCard } from '@/components/symptoms/QuickAccessCard'
 import { SeveritySelector } from '@/components/symptoms/SeveritySelector'
 import { SummaryCard } from '@/components/symptoms/SummaryCard'
 import { SymptomBottomSheet } from '@/components/symptoms/SymptomBottomSheet'
 import { SymptomSearch } from '@/components/symptoms/SymptomSearch'
 import { SuccessScreen } from '@/components/symptoms/SuccessScreen'
 import { BODY_REGION_CODES } from '@/data/bodyRegions'
+import { quickAccesses } from '@/data/quickAccesses'
 import { getCurrentPatient, getAuthSession } from '@/lib/auth'
 import { fetchSymptomCatalog } from '@/lib/symptom-catalog'
 import {
@@ -21,6 +23,7 @@ import {
 } from '@/lib/symptom-records'
 import type {
   BodyRegionId,
+  QuickAccessCode,
   SymptomDefinition,
   SymptomRecord,
 } from '@/types/symptoms'
@@ -35,7 +38,9 @@ export function SymptomsPage() {
   const [isCatalogLoading, setIsCatalogLoading] = useState(true)
   const [catalogError, setCatalogError] = useState<string | null>(null)
   const [sheetRegionId, setSheetRegionId] = useState<BodyRegionId | null>(null)
+  const [sheetQuickAccessCode, setSheetQuickAccessCode] = useState<QuickAccessCode | null>(null)
   const [activeRegionId, setActiveRegionId] = useState<BodyRegionId | null>(null)
+  const [activeQuickAccessCode, setActiveQuickAccessCode] = useState<QuickAccessCode | null>(null)
   const [selectedSymptom, setSelectedSymptom] = useState<SymptomDefinition | null>(null)
   const [selectedSeverityId, setSelectedSeverityId] = useState<number | null>(null)
   const [flowStep, setFlowStep] = useState<FlowStep>('select-region')
@@ -86,6 +91,16 @@ export function SymptomsPage() {
       return haystack.includes(normalizedQuery)
     })
   }, [searchQuery, symptoms])
+
+  const quickAccessSymptoms = useMemo(() => {
+    if (!sheetQuickAccessCode) {
+      return [] as SymptomDefinition[]
+    }
+
+    return symptoms.filter(symptom =>
+      symptom.quickAccessCodes.includes(sheetQuickAccessCode),
+    )
+  }, [sheetQuickAccessCode, symptoms])
 
   const activeSeverityOptions = selectedSymptom?.intensities ?? []
   const selectedSeverity = activeSeverityOptions.find(
@@ -159,9 +174,29 @@ export function SymptomsPage() {
               disabled={!catalogIsAvailable}
               onSelectRegion={(regionId) => {
                 setActiveRegionId(regionId)
+                setActiveQuickAccessCode(null)
+                setSheetQuickAccessCode(null)
                 setSheetRegionId(regionId)
               }}
             />
+          </section>
+
+          <section className="symptom-group-card symptom-group-card-flat">
+            <div className="quick-access-grid" aria-label="Accesos rapidos de sintomas">
+              {quickAccesses.map(item => (
+                <QuickAccessCard
+                  key={item.code}
+                  item={item}
+                  disabled={!catalogIsAvailable}
+                  onSelect={() => {
+                    setActiveRegionId(null)
+                    setActiveQuickAccessCode(item.code)
+                    setSheetRegionId(null)
+                    setSheetQuickAccessCode(item.code)
+                  }}
+                />
+              ))}
+            </div>
           </section>
 
           <section className="symptom-search-row">
@@ -170,7 +205,10 @@ export function SymptomsPage() {
               className="search-launch-card"
               disabled={!catalogIsAvailable}
               onClick={() => {
+                setActiveRegionId(null)
+                setActiveQuickAccessCode(null)
                 setSheetRegionId(null)
+                setSheetQuickAccessCode(null)
                 setFlowStep('search')
               }}
             >
@@ -196,12 +234,16 @@ export function SymptomsPage() {
       ) : null}
 
       <SymptomBottomSheet
-        open={sheetRegionId !== null}
+        open={sheetRegionId !== null || sheetQuickAccessCode !== null}
         title="Elija el sintoma que esta experimentando"
-        symptoms={regionSymptoms}
-        onClose={() => setSheetRegionId(null)}
+        symptoms={sheetRegionId ? regionSymptoms : quickAccessSymptoms}
+        onClose={() => {
+          setSheetRegionId(null)
+          setSheetQuickAccessCode(null)
+        }}
         onSelectSymptom={(symptom) => {
           setSheetRegionId(null)
+          setSheetQuickAccessCode(null)
           chooseSymptom(symptom)
         }}
       />
@@ -278,7 +320,9 @@ export function SymptomsPage() {
                   setSelectedSeverityId(null)
                   setSavedRecord(null)
                   setActiveRegionId(null)
+                  setActiveQuickAccessCode(null)
                   setSheetRegionId(null)
+                  setSheetQuickAccessCode(null)
                   setFlowStep('select-region')
                 }}
               />
@@ -291,6 +335,7 @@ export function SymptomsPage() {
 
   function chooseSymptom(symptom: SymptomDefinition) {
     setSheetRegionId(null)
+    setSheetQuickAccessCode(null)
     setSelectedSymptom(symptom)
     setSelectedSeverityId(null)
     setSavedRecord(null)
@@ -316,6 +361,7 @@ export function SymptomsPage() {
     setSelectedSeverityId(null)
     setSavedRecord(null)
     setSheetRegionId(activeRegionId)
+    setSheetQuickAccessCode(activeQuickAccessCode)
   }
 }
 

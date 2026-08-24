@@ -117,8 +117,8 @@ export function SymptomBottomSheet({
           ))}
           {symptoms.length === 0 ? (
             <div className="empty-search-state" role="status">
-              <strong>No hay sintomas configurados para esta area.</strong>
-              <p>Selecciona otra region corporal o intenta mas tarde.</p>
+              <strong>No hay sintomas configurados para esta seleccion.</strong>
+              <p>Selecciona otra opcion o intenta mas tarde.</p>
             </div>
           ) : null}
         </div>

@@ -1,8 +1,10 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { BaseSource } from '@common/infrastructure/services';
 import {
+  AccesoRapidoSintomaCode,
   REGION_CORPORAL_SINTOMA_VALUES,
   RegionCorporalSintomaType,
+  accesosRapidosSintomaById,
 } from '@gen/general/domain/types';
 import {
   IntensidadSintomaOrm,
@@ -12,6 +14,7 @@ import {
 export type IntensidadSintomaCatalogo = Pick<IntensidadSintomaOrm, 'id' | 'descripcion'>;
 
 export type SintomaCatalogo = Pick<SintomaOrm, 'id' | 'descripcion'> & {
+  accesosRapidos: AccesoRapidoSintomaCode[];
   intensidad: IntensidadSintomaCatalogo[];
 };
 
@@ -50,6 +53,7 @@ export class ConsultarCatalogoSintomasImpl extends BaseSource {
           .map(sintoma => ({
             id: sintoma.id,
             descripcion: sintoma.descripcion,
+            accesosRapidos: accesosRapidosSintomaById(sintoma.id),
             intensidad: intensidadesPorSintoma.get(sintoma.id) ?? [],
           })),
       }));
