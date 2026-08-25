@@ -5,8 +5,8 @@ import { GeneralModule } from './general/module';
 
 const config = [
   // --- AVOID NOWRAP --- //
-  { name: 'Security', url: 'docs/security', version: `1.0`, modules: [SecurityModule] },
   { name: 'General', url: 'docs/general', version: `1.0`, modules: [GeneralModule] },
+  { name: 'Security', url: 'docs/security', version: `1.0`, modules: [SecurityModule] },
 ];
 
 export const initSwagger = (app: INestApplication) => {

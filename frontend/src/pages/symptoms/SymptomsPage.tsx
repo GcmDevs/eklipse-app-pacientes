@@ -18,7 +18,7 @@ import { quickAccesses } from '@/data/quickAccesses'
 import { getCurrentPatient, getAuthSession } from '@/lib/auth'
 import { fetchSymptomCatalog } from '@/lib/symptom-catalog'
 import {
-  createSymptomRecordId,
+  registerSymptomRecord,
   saveSymptomRecord,
 } from '@/lib/symptom-records'
 import type {
@@ -46,6 +46,8 @@ export function SymptomsPage() {
   const [flowStep, setFlowStep] = useState<FlowStep>('select-region')
   const [searchQuery, setSearchQuery] = useState('')
   const [savedRecord, setSavedRecord] = useState<SymptomRecord | null>(null)
+  const [isRegistering, setIsRegistering] = useState(false)
+  const [registerError, setRegisterError] = useState<string | null>(null)
 
   useEffect(() => {
     const controller = new AbortController()
@@ -262,7 +264,7 @@ export function SymptomsPage() {
             className="bottom-sheet symptom-flow-sheet"
             role="dialog"
             aria-modal="true"
-            aria-labelledby="symptom-flow-title"
+            aria-label="Registro de sintomas"
           >
             <div className="sheet-drag-handle" aria-hidden="true">
               <span />
@@ -275,10 +277,12 @@ export function SymptomsPage() {
                 selectedId={selectedSeverityId}
                 onBack={() => {
                   setSelectedSeverityId(null)
+                  setRegisterError(null)
                   reopenSymptomPicker()
                 }}
                 onSelect={(optionId) => {
                   setSelectedSeverityId(optionId)
+                  setRegisterError(null)
                   setFlowStep('summary')
                 }}
               />
@@ -288,26 +292,13 @@ export function SymptomsPage() {
               <SummaryCard
                 symptomName={selectedSymptom.name}
                 severityLabel={selectedSeverity.summaryLabel}
-                onBack={() => setFlowStep('severity')}
-                onConfirm={() => {
-                  const record: SymptomRecord = {
-                    id: createSymptomRecordId(),
-                    patientId: patient.id,
-                    symptomId: selectedSymptom.id,
-                    symptomName: selectedSymptom.name,
-                    regionId: selectedSymptom.regionId,
-                    regionCode: selectedSymptom.regionCode,
-                    severityId: selectedSeverity.id,
-                    severityLabel: selectedSeverity.summaryLabel,
-                    severityLevel: selectedSeverity.severityLevel,
-                    answers: {},
-                    createdAt: new Date().toISOString(),
-                  }
-
-                  saveSymptomRecord(record)
-                  setSavedRecord(record)
-                  setFlowStep('success')
+                isSubmitting={isRegistering}
+                error={registerError}
+                onBack={() => {
+                  setRegisterError(null)
+                  setFlowStep('severity')
                 }}
+                onConfirm={() => void confirmSymptomRecord()}
               />
             ) : null}
 
@@ -319,6 +310,7 @@ export function SymptomsPage() {
                   setSelectedSymptom(null)
                   setSelectedSeverityId(null)
                   setSavedRecord(null)
+                  setRegisterError(null)
                   setActiveRegionId(null)
                   setActiveQuickAccessCode(null)
                   setSheetRegionId(null)
@@ -339,6 +331,7 @@ export function SymptomsPage() {
     setSelectedSymptom(symptom)
     setSelectedSeverityId(null)
     setSavedRecord(null)
+    setRegisterError(null)
     setFlowStep('severity')
   }
 
@@ -360,8 +353,51 @@ export function SymptomsPage() {
     setSelectedSymptom(null)
     setSelectedSeverityId(null)
     setSavedRecord(null)
+    setRegisterError(null)
     setSheetRegionId(activeRegionId)
     setSheetQuickAccessCode(activeQuickAccessCode)
+  }
+
+  async function confirmSymptomRecord() {
+    if (!selectedSymptom || !selectedSeverity || isRegistering) {
+      return
+    }
+
+    setIsRegistering(true)
+    setRegisterError(null)
+
+    try {
+      const savedBackendRecord = await registerSymptomRecord({
+        regionCorporalCode: selectedSymptom.regionCode,
+        sintomaId: selectedSymptom.id,
+        intensidadId: selectedSeverity.id,
+      })
+      const record: SymptomRecord = {
+        id: String(savedBackendRecord.id),
+        patientId: patient.id,
+        symptomId: selectedSymptom.id,
+        symptomName: selectedSymptom.name,
+        regionId: selectedSymptom.regionId,
+        regionCode: selectedSymptom.regionCode,
+        severityId: selectedSeverity.id,
+        severityLabel: selectedSeverity.summaryLabel,
+        severityLevel: selectedSeverity.severityLevel,
+        answers: {},
+        createdAt: savedBackendRecord.createdAt,
+      }
+
+      try {
+        saveSymptomRecord(record)
+      } catch {
+        // The backend record is authoritative; a local cache failure must not report a false save error.
+      }
+      setSavedRecord(record)
+      setFlowStep('success')
+    } catch (error) {
+      setRegisterError(getRegisterErrorMessage(error))
+    } finally {
+      setIsRegistering(false)
+    }
   }
 }
 
@@ -369,6 +405,12 @@ function getCatalogErrorMessage(error: unknown) {
   return error instanceof Error
     ? error.message
     : 'No pudimos cargar el catalogo de sintomas.'
+}
+
+function getRegisterErrorMessage(error: unknown) {
+  return error instanceof Error
+    ? error.message
+    : 'No pudimos guardar el sintoma. Intentalo nuevamente.'
 }
 
 type CatalogStatusProps = {

@@ -3,10 +3,11 @@ import { EstadoAnimoController, SintomasController } from './presentation/contro
 import {
   ConsultarCatalogoSintomasImpl,
   RegistrarEstadoAnimoImpl,
+  RegistrarSintomaImpl,
 } from './infrastructure/services';
 
 @Module({
   controllers: [EstadoAnimoController, SintomasController],
-  providers: [ConsultarCatalogoSintomasImpl, RegistrarEstadoAnimoImpl],
+  providers: [ConsultarCatalogoSintomasImpl, RegistrarEstadoAnimoImpl, RegistrarSintomaImpl],
 })
 export class GeneralModule {}
