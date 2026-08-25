@@ -6,6 +6,7 @@ import {
   RegionCorporalSintomaCode,
 } from '@gen/general/domain/types';
 export * from './catalogo-sintomas-response.dto';
+export * from './paciente-response.dto';
 
 export class RegistrarEstadoAnimoDto {
   @ApiProperty()
