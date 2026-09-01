@@ -1,5 +1,4 @@
 import { mockPatients } from '@/data/mockPatient';
-import { getReferenceDate } from '@/lib/invitations';
 import { getMoodRecords } from '@/lib/mood-records';
 import { getSymptomRecords } from '@/lib/symptom-records';
 import type {
@@ -56,7 +55,7 @@ export function getAdminDashboardMetrics(): AdminDashboardMetrics {
   const summaries = getPatientMonitoringSummaries();
   const moodRecords = getMoodRecords();
   const symptomRecords = getSymptomRecords();
-  const todayKey = toDateKey(getReferenceDate());
+  const todayKey = toDateKey(new Date());
 
   const moodDistributionMap = moodRecords.reduce<Record<string, number>>((accumulator, record) => {
     accumulator[record.mood] = (accumulator[record.mood] ?? 0) + 1;
@@ -162,7 +161,7 @@ function getMostRecentDate(left: string | null, right: string | null) {
 }
 
 function getDifferenceInDays(dateValue: string) {
-  const today = getReferenceDate();
+  const today = new Date();
   const target = new Date(dateValue);
   const difference = today.getTime() - target.getTime();
   return Math.floor(difference / (1000 * 60 * 60 * 24));

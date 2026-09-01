@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react';
 import {
   ArrowLeft,
   CalendarDays,
@@ -7,134 +7,199 @@ import {
   HeartHandshake,
   Sparkles,
   Users,
-} from 'lucide-react'
-import { Link } from 'react-router-dom'
+} from 'lucide-react';
+import { Link } from 'react-router-dom';
 import {
-  getInvitationDateLabel,
-  getInvitationTimeLabel,
-  getInvitationTimingStatus,
-  getVisibleInvitationsForCurrentUser,
-} from '@/lib/invitations'
+  getEventAttendanceStatusLabel,
+  getEventInvitationAccent,
+  getEventInvitationDateLabel,
+  getEventInvitationTimeLabel,
+  getEventInvitationTimingStatus,
+  type EventInvitationAccent,
+  upsertEventInvitation,
+} from '@/lib/event-invitations';
+import {
+  getMyEventInvitations,
+  onEventInvitationUpdated,
+  onNewEventInvitation,
+} from '@/lib/events';
+import type { NewEventInvitation } from '@/types/event';
 
-type InvitationTab = 'all' | 'upcoming' | 'past'
+type InvitationTab = 'all' | 'upcoming' | 'past';
 
 const tabs: Array<{ id: InvitationTab; label: string }> = [
   { id: 'all', label: 'Todas' },
-  { id: 'upcoming', label: 'Proximas' },
+  { id: 'upcoming', label: 'Próximas' },
   { id: 'past', label: 'Pasadas' },
-]
+];
 
 export function InvitationsPage() {
-  const [activeTab, setActiveTab] = useState<InvitationTab>('all')
-  const invitations = getVisibleInvitationsForCurrentUser()
+  const [activeTab, setActiveTab] = useState<InvitationTab>('all');
+  const [invitations, setInvitations] = useState<NewEventInvitation[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    let active = true;
+    const receiveInvitation = (invitation: NewEventInvitation) => {
+      if (active) setInvitations(current => upsertEventInvitation(current, invitation));
+    };
+    const unsubscribeNew = onNewEventInvitation(receiveInvitation);
+    const unsubscribeUpdated = onEventInvitationUpdated(receiveInvitation);
+
+    getMyEventInvitations()
+      .then(data => {
+        if (active) setInvitations(data);
+      })
+      .catch(loadError => {
+        if (active) {
+          setError(
+            loadError instanceof Error
+              ? loadError.message
+              : 'No fue posible consultar tus invitaciones.'
+          );
+        }
+      })
+      .finally(() => {
+        if (active) setIsLoading(false);
+      });
+
+    return () => {
+      active = false;
+      unsubscribeNew();
+      unsubscribeUpdated();
+    };
+  }, []);
 
   const visibleInvitations = useMemo(() => {
     const orderedInvitations = [...invitations].sort((left, right) => {
-      const leftStatus = getInvitationTimingStatus(left)
-      const rightStatus = getInvitationTimingStatus(right)
+      const leftStatus = getEventInvitationTimingStatus(left);
+      const rightStatus = getEventInvitationTimingStatus(right);
+      if (leftStatus !== rightStatus) return leftStatus === 'upcoming' ? -1 : 1;
 
-      if (leftStatus === rightStatus) {
-        return 0
-      }
+      const direction = leftStatus === 'upcoming' ? 1 : -1;
+      return (new Date(left.startsAt).getTime() - new Date(right.startsAt).getTime()) * direction;
+    });
 
-      return leftStatus === 'upcoming' ? -1 : 1
-    })
-
-    if (activeTab === 'all') {
-      return orderedInvitations
-    }
-
-    return orderedInvitations.filter(
-      (invitation) => getInvitationTimingStatus(invitation) === activeTab,
-    )
-  }, [activeTab, invitations])
+    return activeTab === 'all'
+      ? orderedInvitations
+      : orderedInvitations.filter(
+          invitation => getEventInvitationTimingStatus(invitation) === activeTab
+        );
+  }, [activeTab, invitations]);
 
   return (
-    <main className="page-shell invitation-page">
-      <section className="invitation-shell">
-        <header className="invitation-topbar">
-          <Link to="/inicio" className="invitation-back-link" aria-label="Volver al inicio">
+    <main className='page-shell invitation-page'>
+      <section className='invitation-shell'>
+        <header className='invitation-topbar'>
+          <Link to='/inicio' className='invitation-back-link' aria-label='Volver al inicio'>
             <ArrowLeft size={18} />
           </Link>
           <h1>Invitaciones</h1>
           <button
-            type="button"
-            className="icon-button invitation-filter-button"
-            aria-label="Filtrar invitaciones"
+            type='button'
+            className='icon-button invitation-filter-button'
+            aria-label='Filtrar invitaciones'
           >
             <Filter size={18} />
           </button>
         </header>
 
-        <nav className="invitation-tabs" aria-label="Filtros de invitaciones">
-          {tabs.map((tab) => {
-            const isActive = activeTab === tab.id
-
+        <nav className='invitation-tabs' aria-label='Filtros de invitaciones'>
+          {tabs.map(tab => {
+            const isActive = activeTab === tab.id;
             return (
               <button
                 key={tab.id}
-                type="button"
+                type='button'
                 className={isActive ? 'invitation-tab invitation-tab-active' : 'invitation-tab'}
                 aria-pressed={isActive}
                 onClick={() => setActiveTab(tab.id)}
               >
                 {tab.label}
               </button>
-            )
+            );
           })}
         </nav>
 
-        <section className="invitation-list">
-          {visibleInvitations.map((invitation) => (
-            <Link
-              key={invitation.id}
-              to={`/invitaciones/${invitation.id}`}
-              className={`invitation-list-card invitation-list-card-${invitation.accent}`}
-            >
-              <div
-                className={`invitation-list-icon invitation-list-icon-${invitation.accent}`}
-                aria-hidden="true"
-              >
-                {getInvitationIcon(invitation.accent)}
-              </div>
+        <section className='invitation-list'>
+          {isLoading ? (
+            <article className='admin-empty-state'>
+              <strong>Consultando tus invitaciones...</strong>
+            </article>
+          ) : null}
 
-              <div className="invitation-list-copy">
-                <strong>{invitation.title}</strong>
-                <span>{`${getInvitationDateLabel(invitation)} - ${getInvitationTimeLabel(invitation)}`}</span>
-              </div>
+          {!isLoading && error ? (
+            <article className='admin-empty-state'>
+              <strong>No pudimos cargar tus invitaciones.</strong>
+              <span>{error}</span>
+            </article>
+          ) : null}
 
-              <div className="invitation-list-end">
-                {getInvitationTimingStatus(invitation) === 'upcoming' ? (
-                  <span
-                    className={`invitation-status-pill invitation-status-pill-${invitation.accent}`}
+          {!isLoading && !error
+            ? visibleInvitations.map(invitation => {
+                const accent = getEventInvitationAccent(invitation.invitationId);
+                const timingStatus = getEventInvitationTimingStatus(invitation);
+                return (
+                  <Link
+                    key={invitation.invitationId}
+                    to={`/invitaciones/${invitation.invitationId}`}
+                    className={`invitation-list-card invitation-list-card-${accent}`}
                   >
-                    Proxima
-                  </span>
-                ) : (
-                  <span className="invitation-status-pill invitation-status-pill-past">
-                    Pasada
-                  </span>
-                )}
-                <ChevronRight size={16} aria-hidden="true" />
-              </div>
-            </Link>
-          ))}
+                    <div
+                      className={`invitation-list-icon invitation-list-icon-${accent}`}
+                      aria-hidden='true'
+                    >
+                      {getInvitationIcon(accent)}
+                    </div>
 
-          {visibleInvitations.length === 0 ? (
-            <article className="admin-empty-state">
-              <strong>No hay invitaciones disponibles para tu especialidad.</strong>
-              <span>Tu equipo podra publicar nuevas actividades para ti mas adelante.</span>
+                    <div className='invitation-list-copy'>
+                      <strong>{invitation.title}</strong>
+                      <span>
+                        {`${getEventInvitationDateLabel(invitation)} - ${getEventInvitationTimeLabel(invitation)} · ${getEventAttendanceStatusLabel(invitation.status)}`}
+                      </span>
+                    </div>
+
+                    <div className='invitation-list-end'>
+                      <span
+                        className={
+                          timingStatus === 'upcoming'
+                            ? `invitation-status-pill invitation-status-pill-${accent}`
+                            : 'invitation-status-pill invitation-status-pill-past'
+                        }
+                      >
+                        {timingStatus === 'upcoming' ? 'Próxima' : 'Pasada'}
+                      </span>
+                      <ChevronRight size={16} aria-hidden='true' />
+                    </div>
+                  </Link>
+                );
+              })
+            : null}
+
+          {!isLoading && !error && visibleInvitations.length === 0 ? (
+            <article className='admin-empty-state'>
+              <strong>
+                No tienes invitaciones{' '}
+                {activeTab === 'all'
+                  ? 'registradas'
+                  : activeTab === 'upcoming'
+                    ? 'próximas'
+                    : 'pasadas'}
+                .
+              </strong>
+              <span>Cuando te inviten a un evento aparecerá en esta sección.</span>
             </article>
           ) : null}
         </section>
       </section>
     </main>
-  )
+  );
 }
 
-function getInvitationIcon(accent: 'teal' | 'purple' | 'amber' | 'rose') {
-  if (accent === 'purple') return <Users size={18} />
-  if (accent === 'amber') return <HeartHandshake size={18} />
-  if (accent === 'rose') return <Sparkles size={18} />
-  return <CalendarDays size={18} />
+function getInvitationIcon(accent: EventInvitationAccent) {
+  if (accent === 'purple') return <Users size={18} />;
+  if (accent === 'amber') return <HeartHandshake size={18} />;
+  if (accent === 'rose') return <Sparkles size={18} />;
+  return <CalendarDays size={18} />;
 }

@@ -1,26 +1,26 @@
-import { CircleHelp } from 'lucide-react'
-import { createBrowserRouter, Navigate } from 'react-router-dom'
-import { AdminLayout } from '@/components/layout/AdminLayout'
-import { MainLayout } from '@/components/layout/MainLayout'
-import { AdminDashboardPage } from '@/pages/admin/AdminDashboardPage'
-import { AdminInvitationFormPage } from '@/pages/admin/AdminInvitationFormPage'
-import { AdminInvitationsPage } from '@/pages/admin/AdminInvitationsPage'
-import { AdminPatientDetailPage } from '@/pages/admin/AdminPatientDetailPage'
-import { AdminPatientsPage } from '@/pages/admin/AdminPatientsPage'
-import { AdminProfilePage } from '@/pages/admin/AdminProfilePage'
-import { LoginPage } from '@/pages/auth/LoginPage'
-import { ComingSoonPage } from '@/pages/home/ComingSoonPage'
-import { HistoryPage } from '@/pages/history/HistoryPage'
-import { HomePage } from '@/pages/home/HomePage'
-import { InvitationDetailPage } from '@/pages/invitations/InvitationDetailPage'
-import { InvitationsPage } from '@/pages/invitations/InvitationsPage'
-import { MoodPage } from '@/pages/mood/MoodPage'
-import { NotFoundPage } from '@/pages/NotFoundPage'
-import { ProfilePage } from '@/pages/profile/ProfilePage'
-import { SymptomsPage } from '@/pages/symptoms/SymptomsPage'
-import { ProtectedRoute } from '@/routes/ProtectedRoute'
-import { PublicOnlyRoute } from '@/routes/PublicOnlyRoute'
-import { RootRedirect } from '@/routes/RootRedirect'
+import { CircleHelp } from 'lucide-react';
+import { createBrowserRouter, Navigate } from 'react-router-dom';
+import { AdminLayout } from '@/components/layout/AdminLayout';
+import { MainLayout } from '@/components/layout/MainLayout';
+import { AdminDashboardPage } from '@/pages/admin/AdminDashboardPage';
+import { AdminEventFormPage } from '@/pages/admin/AdminEventFormPage';
+import { AdminEventsPage } from '@/pages/admin/AdminEventsPage';
+import { AdminPatientDetailPage } from '@/pages/admin/AdminPatientDetailPage';
+import { AdminPatientsPage } from '@/pages/admin/AdminPatientsPage';
+import { AdminProfilePage } from '@/pages/admin/AdminProfilePage';
+import { LoginPage } from '@/pages/auth/LoginPage';
+import { ComingSoonPage } from '@/pages/home/ComingSoonPage';
+import { HistoryPage } from '@/pages/history/HistoryPage';
+import { HomePage } from '@/pages/home/HomePage';
+import { InvitationDetailPage } from '@/pages/invitations/InvitationDetailPage';
+import { InvitationsPage } from '@/pages/invitations/InvitationsPage';
+import { MoodPage } from '@/pages/mood/MoodPage';
+import { NotFoundPage } from '@/pages/NotFoundPage';
+import { ProfilePage } from '@/pages/profile/ProfilePage';
+import { SymptomsPage } from '@/pages/symptoms/SymptomsPage';
+import { ProtectedRoute } from '@/routes/ProtectedRoute';
+import { PublicOnlyRoute } from '@/routes/PublicOnlyRoute';
+import { RootRedirect } from '@/routes/RootRedirect';
 
 export const appRouter = createBrowserRouter([
   {
@@ -71,8 +71,8 @@ export const appRouter = createBrowserRouter([
             element: (
               <ComingSoonPage
                 icon={CircleHelp}
-                title="Preguntas frecuentes"
-                description="Encontraras informacion util para acompanarte durante tu proceso."
+                title='Preguntas frecuentes'
+                description='Encontraras informacion util para acompanarte durante tu proceso.'
               />
             ),
           },
@@ -96,7 +96,7 @@ export const appRouter = createBrowserRouter([
         children: [
           {
             path: '/admin',
-            element: <Navigate to="/admin/inicio" replace />,
+            element: <Navigate to='/admin/inicio' replace />,
           },
           {
             path: '/admin/inicio',
@@ -111,16 +111,16 @@ export const appRouter = createBrowserRouter([
             element: <AdminPatientDetailPage />,
           },
           {
-            path: '/admin/invitaciones',
-            element: <AdminInvitationsPage />,
+            path: '/admin/eventos',
+            element: <AdminEventsPage />,
           },
           {
-            path: '/admin/invitaciones/nueva',
-            element: <AdminInvitationFormPage />,
+            path: '/admin/eventos/nuevo',
+            element: <AdminEventFormPage />,
           },
           {
-            path: '/admin/invitaciones/:invitationId/editar',
-            element: <AdminInvitationFormPage />,
+            path: '/admin/eventos/:eventId/editar',
+            element: <AdminEventFormPage />,
           },
           {
             path: '/admin/perfil',
@@ -134,4 +134,4 @@ export const appRouter = createBrowserRouter([
     path: '*',
     element: <NotFoundPage />,
   },
-])
+]);

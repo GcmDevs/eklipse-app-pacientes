@@ -3,7 +3,6 @@ import {
   Activity,
   CalendarDays,
   CircleHelp,
-  ClipboardList,
   History,
   House,
   LayoutDashboard,
@@ -89,11 +88,11 @@ export const adminNavigationItems: NavigationItem[] = [
     icon: Users,
   },
   {
-    to: '/admin/invitaciones',
-    label: 'Invitaciones',
-    shortLabel: 'Invitaciones',
-    title: 'Gestion de invitaciones',
-    icon: ClipboardList,
+    to: '/admin/eventos',
+    label: 'Eventos',
+    shortLabel: 'Eventos',
+    title: 'Gestión de eventos',
+    icon: CalendarDays,
   },
   {
     to: '/admin/perfil',
@@ -120,16 +119,12 @@ export function getPageTitle(pathname: string, role: UserRole) {
     return 'Detalle del paciente';
   }
 
-  if (role === 'admin' && pathname === '/admin/invitaciones/nueva') {
-    return 'Nueva invitacion';
+  if (role === 'admin' && pathname === '/admin/eventos/nuevo') {
+    return 'Crear evento';
   }
 
-  if (
-    role === 'admin' &&
-    pathname.includes('/admin/invitaciones/') &&
-    pathname.endsWith('/editar')
-  ) {
-    return 'Editar invitacion';
+  if (role === 'admin' && pathname.includes('/admin/eventos/') && pathname.endsWith('/editar')) {
+    return 'Modificar evento';
   }
 
   return 'Ruta no encontrada';

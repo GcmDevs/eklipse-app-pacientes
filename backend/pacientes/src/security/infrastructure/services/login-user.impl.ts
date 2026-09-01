@@ -18,8 +18,85 @@ import { _PrivSecPatientOrm } from '@common/infrastructure/orm/pacient.orm';
 @Injectable()
 export class LoginUserImpl {
   public async execute(body: LoginUserDto) {
-    if (body.isPatient) return this._asPaciente(body);
-    else throw new Error('Aun no existe gestión para usuarios medicos');
+    if (body.authAsUser) return this._executeAsUser(body);
+    else return this._asPaciente(body);
+  }
+
+  private async _executeAsUser(body: LoginUserDto) {
+    const errorMsg = 'Usuario y/o clave incorrecta';
+    const { username, password } = body;
+    const context = gcmContextFactory(body.context);
+    const conn = switchConn(context);
+
+    const qr = conn.createQueryRunner();
+
+    await qr.connect();
+    try {
+      await qr.startTransaction();
+
+      const userRp = qr.manager.getRepository(_PrivSecUserOrm);
+
+      let user: _PrivSecUserOrm | null = null;
+      let matchingPasswords = false;
+      let isDimUser = true;
+
+      user = await userRp.findOne({
+        where: [{ document: username }],
+        select: {
+          id: true,
+          document: true,
+          fullName: true,
+          password: true,
+          statusCode: true,
+          lastAuth: true,
+        },
+      });
+
+      if (!user) throw new Error(errorMsg);
+
+      if (user.statusCode !== ESTADOS_USUARIO.ACTIVO.getCode()) {
+        throw new Error(
+          `Su usuario está en estado ${estadoUsuarioTypeFactory(user.statusCode as EstadoUsuarioCode).getForHumans()}`
+        );
+      }
+
+      if (isDimUser) matchingPasswords = await crypto.compareDimPassword(password, user.password);
+      else matchingPasswords = await crypto.compare(password, user.password);
+
+      const passwordIsReset = !isDimUser ? (user as any).passwordIsReset : false;
+
+      if (matchingPasswords) {
+        const payload: IAuthToken = {
+          jti: RSAServices.encryptId(user.id),
+          rst: passwordIsReset,
+          dcm: user.document,
+          fnm: user.fullName,
+          pid: undefined!,
+          sub: body.context,
+          rol: 'USUARIO',
+        };
+
+        const token = jwt.sign(payload, processEnv.JWT_SECRET_KEY, {
+          expiresIn: '7d',
+          algorithm: 'HS512',
+        });
+
+        user.lastAuth = new Date();
+
+        await userRp.save(user);
+
+        await qr.commitTransaction();
+
+        return { token, passwordIsReset };
+      } else {
+        throw new Error(errorMsg);
+      }
+    } catch (error: any) {
+      await qr.rollbackTransaction();
+      throw new Error(error.message);
+    } finally {
+      await qr.release();
+    }
   }
 
   private async _asPaciente(body: LoginUserDto) {

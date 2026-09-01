@@ -22,5 +22,5 @@ export class LoginUserDto {
   @ApiProperty()
   @IsNotEmpty()
   @IsBoolean()
-  isPatient: boolean;
+  authAsUser: boolean;
 }

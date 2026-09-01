@@ -3,7 +3,7 @@ import { getAuthSession } from '@/lib/auth';
 import type { QuickAccessCode, SymptomDefinition } from '@/types/symptoms';
 
 const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL?.replace(/\/$/, '') ?? 'http://localhost:8005';
+  import.meta.env.VITE_API_BASE_URL?.replace(/\/$/, '') ?? 'http://localhost:8104';
 
 type BackendSymptomIntensity = {
   id: number;
@@ -71,7 +71,7 @@ export async function fetchSymptomCatalog(signal?: AbortSignal): Promise<Symptom
           label: intensity.descripcion,
           summaryLabel: intensity.descripcion,
           severityLevel: index + 1,
-        }),
+        })
       ),
     }));
   });

@@ -4,7 +4,7 @@ const production = processEnv.PRODUCTION;
 const showDocs = processEnv.SHOW_DOCS;
 const isHttps = processEnv.IS_HTTPS;
 const apiUrlBase = generateApiUrlBase();
-const port = 8005;
+const port = 8104;
 
 export const ENVIRONMENTS = {
   production,

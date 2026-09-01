@@ -1,6 +1,7 @@
 import { Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import { AppHeader } from '@/components/layout/AppHeader'
+import { EventSocketBridge } from '@/components/events/EventSocketBridge'
 import { Sidebar } from '@/components/layout/Sidebar'
 import { clearAuthSession, getAuthSession } from '@/lib/auth'
 import { adminNavigationItems, getPageTitle } from './navigation'
@@ -40,6 +41,7 @@ export function AdminLayout() {
 
   return (
     <div className="app-layout app-layout-admin">
+      <EventSocketBridge />
       <Sidebar
         mobileOpen={mobileOpen}
         navigationItems={adminNavigationItems}
